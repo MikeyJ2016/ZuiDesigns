@@ -14,8 +14,10 @@ import {
   StatusBar,
   StyleSheet,
   Text,
+  TextInput,
   useColorScheme,
   View,
+  Button,
 } from 'react-native';
 
 import {
@@ -53,41 +55,78 @@ const Section = ({children, title}): Node => {
 };
 
 const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+return(
+ <View style = {styles.sectionContainer}>
+    <Text  style = {{ textAlign : "center", fontSize : 15}}>
+        ZuiDesigns Login Page
+    </Text>
+    <TextInput
+        style={{
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        fontSize  : 12,
+        textAlign : "center"
+        }}
+        defaultValue="Username"
+        />
+        <TextInput
+                style={{
+                height: 40,
+                borderColor: 'gray',
+                borderWidth: 1,
+                fontSize  : 12,
+                textAlign : "center"
+                }}
+                defaultValue="Password"
+         />
 
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
+         <Button  title = {"Submit"}/>
+
+
+ </View>
+ );
+//  const isDarkMode = useColorScheme() === 'dark';
+//
+//  const backgroundStyle = {
+//    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+//  };
+//
+//  return (
+//    <SafeAreaView style={backgroundStyle}>
+//      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+//      <ScrollView
+//        contentInsetAdjustmentBehavior="automatic"
+//        style={backgroundStyle}>
+//        <Header />
+//        <View
+//
+//          style={{
+//            backgroundColor: isDarkMode ? Colors.black : Colors.white,
+//          }}>
+//          <Text>
+//          Hello there
+//          </Text>
+//
+//          <Section title="Is this the same app One">
+//            Edit <Text style={styles.highlight}>App.js</Text> to change this
+//            screen and then come back to see your edits.
+//          </Section>
+//          <Section title="See Your Changes">
+//            <ReloadInstructions />
+//          </Section>
+//          <Section title="Debug">
+//            <DebugInstructions />
+//          </Section>
+//          <Section title="Learn More">
+//            Read the docs to discover what to do next:
+//          </Section>
+//          <LearnMoreLinks />
+//        </View>
+//      </ScrollView>
+//    </SafeAreaView>
+//  );
 };
 
 const styles = StyleSheet.create({
