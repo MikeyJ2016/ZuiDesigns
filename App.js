@@ -6,8 +6,11 @@
  * @flow strict-local
  */
 
+import 'react-native-gesture-handler';
 import React from 'react';
 import type {Node} from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import {
   SafeAreaView,
   ScrollView,
@@ -27,6 +30,10 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+
+import HomeScreen from './screens/User_HomeScreen.js';
+import LockerCheckout from './screens/LockerCheckout.js';
+import LockerConfiguration from './screens/LockerConfiguration.js';
 
 const Section = ({children, title}): Node => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -54,80 +61,34 @@ const Section = ({children, title}): Node => {
   );
 };
 
+const Stack = createStackNavigator();
+
 const App: () => Node = () => {
 
 return(
- <View style = {styles.sectionContainer}>
-    <Text  style = {{ textAlign : "center", fontSize : 15}}>
-        ZuiDesigns Login Page
-    </Text>
-    <TextInput
-        style={{
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        fontSize  : 12,
-        textAlign : "center"
-        }}
-        defaultValue="Username"
-        />
-        <TextInput
-                style={{
-                height: 40,
-                borderColor: 'gray',
-                borderWidth: 1,
-                fontSize  : 12,
-                textAlign : "center"
-                }}
-                defaultValue="Password"
-         />
+    <NavigationContainer>
+        <Stack.Navigator screenOptions = {{
+            headerStyle :{
+                backgroundColor : '#0E2742',
+            },
+            footerStyle :{
+                backgroundColor : '#114F79',
+            },
+            headerTintColor : '#fff',
+            cardStyle : {
+                backgroundColor : '#114F79',
+            },
+            headerTitleStyle: {
+                fontWeight : 'bold'
+            }
+        }}>
 
-         <Button  title = {"Submit"}/>
-
-
- </View>
- );
-//  const isDarkMode = useColorScheme() === 'dark';
-//
-//  const backgroundStyle = {
-//    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-//  };
-//
-//  return (
-//    <SafeAreaView style={backgroundStyle}>
-//      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-//      <ScrollView
-//        contentInsetAdjustmentBehavior="automatic"
-//        style={backgroundStyle}>
-//        <Header />
-//        <View
-//
-//          style={{
-//            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-//          }}>
-//          <Text>
-//          Hello there
-//          </Text>
-//
-//          <Section title="Is this the same app One">
-//            Edit <Text style={styles.highlight}>App.js</Text> to change this
-//            screen and then come back to see your edits.
-//          </Section>
-//          <Section title="See Your Changes">
-//            <ReloadInstructions />
-//          </Section>
-//          <Section title="Debug">
-//            <DebugInstructions />
-//          </Section>
-//          <Section title="Learn More">
-//            Read the docs to discover what to do next:
-//          </Section>
-//          <LearnMoreLinks />
-//        </View>
-//      </ScrollView>
-//    </SafeAreaView>
-//  );
-};
+            <Stack.Screen name = "User Home Page" component ={HomeScreen}/>
+            <Stack.Screen name = "Locker Checkout" component ={LockerCheckout}/>
+            <Stack.Screen name = "Locker Configuration" component ={LockerConfiguration}/>
+        </Stack.Navigator>
+    </NavigationContainer>
+)};
 
 const styles = StyleSheet.create({
   sectionContainer: {
