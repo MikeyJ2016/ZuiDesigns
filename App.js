@@ -7,10 +7,15 @@
  */
 
 import 'react-native-gesture-handler';
-import React from 'react';
+import React,{useEffect} from 'react';
 import type {Node} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {AuthContext } from './Components/context.js';
+
+
 import {
   SafeAreaView,
   ScrollView,
@@ -21,6 +26,7 @@ import {
   useColorScheme,
   View,
   Button,
+  ActivityIndicator,
 } from 'react-native';
 
 import {
@@ -31,43 +37,136 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+import { DrawerContent } from './screens/DrawerContent';
+
 import HomeScreen from './screens/User_HomeScreen.js';
 import LockerCheckout from './screens/LockerCheckout.js';
 import LockerConfiguration from './screens/LockerConfiguration.js';
+import Login from './screens/Login.js';
+import Settings from './screens/Settings.js';
+import RootStackScreen from './screens/RootStackScreen.js'
 
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
 
-const Stack = createStackNavigator();
+const HomeStack = createStackNavigator();
+const LSStack = createStackNavigator();
+const Drawer = createDrawerNavigator();
 
+const HomeStackScreen = ({navigation}) => {
+return(
+     <HomeStack.Navigator screenOptions = {{
+                headerStyle :{
+                    backgroundColor : '#0E2742',
+                },
+                footerStyle :{
+                    backgroundColor : '#114F79',
+                },
+                headerTintColor : '#fff',
+                cardStyle : {
+                    backgroundColor : '#114F79',
+                },
+                headerTitleStyle: {
+                    fontWeight : 'bold',
+                    alignItems : 'center'
+                }
+            }}>
+                <HomeStack.Screen name = "User Home Page" component ={HomeScreen} options = {{
+                    headerLeft : () => (
+
+                    <Icon.Button name="ios-menu" size = {25} backgroundColor='#0E2742'
+                    onPress = {() => {navigation.openDrawer()}}> </Icon.Button>
+                    )
+                }}
+                />
+
+     </HomeStack.Navigator>
+     );
+}
+
+
+const LSStackScreen = ({navigation}) => {
+return(
+     <LSStack.Navigator screenOptions = {{
+                headerStyle :{
+                    backgroundColor : '#0E2742',
+                },
+                footerStyle :{
+                    backgroundColor : '#114F79',
+                },
+                headerTintColor : '#fff',
+                cardStyle : {
+                    backgroundColor : '#114F79',
+                },
+                headerTitleStyle: {
+                    fontWeight : 'bold',
+                    alignItems : 'center'
+                }
+            }}>
+                <LSStack.Screen name = "Locker Checkout" component ={LockerCheckout} options = {{
+                headerLeft : () => (
+
+                  <Icon.Button name="ios-menu" size = {25} backgroundColor='#0E2742'
+                   onPress = {() => {navigation.openDrawer()}}> </Icon.Button>
+                 )}}
+                 />
+     </LSStack.Navigator>
+     );
+}
 const App: () => Node = () => {
 
+const [isLoading,setIsLoading] = React.useState(true);
+const[userToken, setUserToken] = React.useState(null);
+
+    const authContext = React.useMemo(() => ({
+        signIn: () => {
+            setUserToken('fgkj');
+            setIsLoading(false);
+        },
+        signOut: () => {
+            setUserToken(null);
+            setIsLoading(false);
+        },
+        signUp: () => {
+            setUserToken('fgkj');
+            setIsLoading(false);
+        },
+        getUser: () => {
+            return (
+                userToken
+            );
+        }
+    }));
+
+
+    useEffect(() =>{
+        setTimeout(() => {
+            setIsLoading(false);
+        },1000);
+    },[]);
+
+if(isLoading){
+    return(
+        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+            <ActivityIndicator size ="large"/>
+        </View>
+    );
+}
+
 return(
+<AuthContext.Provider value={authContext}>
     <NavigationContainer>
-        <Stack.Navigator screenOptions = {{
+        {userToken !== null ? (
+            <Drawer.Navigator drawerContent={props => <DrawerContent {...props}/>}>
+              <Drawer.Screen name="User Home Page" component ={HomeStackScreen}/>
+              <Drawer.Screen name="Locker Checkout" component ={LSStackScreen}/>
+              <Drawer.Screen name="Locker Configuration" component ={LockerConfiguration}/>
+             </Drawer.Navigator>
+        )
+        :
+        (
+            <RootStackScreen/>
+        )
+        }
+       {/* <Stack.Navigator screenOptions = {{
             headerStyle :{
                 backgroundColor : '#0E2742',
             },
@@ -79,15 +178,18 @@ return(
                 backgroundColor : '#114F79',
             },
             headerTitleStyle: {
-                fontWeight : 'bold'
+                fontWeight : 'bold',
+                alignItems : 'center'
             }
         }}>
-
+            <Stack.Screen name = "Login" component ={Login}/>
             <Stack.Screen name = "User Home Page" component ={HomeScreen}/>
             <Stack.Screen name = "Locker Checkout" component ={LockerCheckout}/>
             <Stack.Screen name = "Locker Configuration" component ={LockerConfiguration}/>
-        </Stack.Navigator>
+            <Stack.Screen name = "Settings" component = {Settings}/>
+        </Stack.Navigator>*/}
     </NavigationContainer>
+</AuthContext.Provider>
 )};
 
 const styles = StyleSheet.create({
