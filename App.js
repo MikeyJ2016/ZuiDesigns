@@ -44,12 +44,19 @@ import LockerCheckout from './screens/LockerCheckout.js';
 import LockerConfiguration from './screens/LockerConfiguration.js';
 import Login from './screens/Login.js';
 import Settings from './screens/Settings.js';
+import ChangePasswordScreen from './screens/ChangePassword.js';
+import ChangeUsernameScreen from './screens/ChangeUsername.js';
 import RootStackScreen from './screens/RootStackScreen.js'
 
 
-const HomeStack = createStackNavigator();
+
 const LSStack = createStackNavigator();
+const CPStack = createStackNavigator();
+const CUStack = createStackNavigator();
+const LCStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
+const HomeStack = createStackNavigator();
+const SettingStack = createStackNavigator();
 
 const HomeStackScreen = ({navigation}) => {
 return(
@@ -82,6 +89,100 @@ return(
      );
 }
 
+const SettingsStackScreen = ({navigation}) => {
+return(
+     <SettingStack.Navigator screenOptions = {{
+                headerStyle :{
+                    backgroundColor : '#0E2742',
+                },
+                footerStyle :{
+                    backgroundColor : '#114F79',
+                },
+                headerTintColor : '#fff',
+                cardStyle : {
+                    backgroundColor : '#114F79',
+                },
+                headerTitleStyle: {
+                    fontWeight : 'bold',
+                    alignItems : 'center'
+                }
+            }}>
+                <SettingStack.Screen name = "Settings" component ={Settings} options = {{
+                    headerLeft : () => (
+
+                    <Icon.Button name="ios-menu" size = {25} backgroundColor='#0E2742'
+                    onPress = {() => {navigation.openDrawer()}}> </Icon.Button>
+                    )
+                }}
+                />
+
+     </SettingStack.Navigator>
+     );
+}
+
+const CPStackScreen = ({navigation}) => {
+return(
+     <CPStack.Navigator screenOptions = {{
+                headerStyle :{
+                    backgroundColor : '#0E2742',
+                },
+                footerStyle :{
+                    backgroundColor : '#114F79',
+                },
+                headerTintColor : '#fff',
+                cardStyle : {
+                    backgroundColor : '#114F79',
+                },
+                headerTitleStyle: {
+                    fontWeight : 'bold',
+                    alignItems : 'center'
+                }
+            }}>
+                <CPStack.Screen name = "Change Password" component ={ChangePasswordScreen} options = {{
+                    headerLeft : () => (
+
+                    <Icon.Button name="ios-menu" size = {25} backgroundColor='#0E2742'
+                    onPress = {() => {navigation.openDrawer()}}> </Icon.Button>
+                    )
+                }}
+                />
+
+     </CPStack.Navigator>
+     );
+}
+
+const CUStackScreen = ({navigation}) => {
+return(
+     <CUStack.Navigator screenOptions = {{
+                headerStyle :{
+                    backgroundColor : '#0E2742',
+                },
+                footerStyle :{
+                    backgroundColor : '#114F79',
+                },
+                headerTintColor : '#fff',
+                cardStyle : {
+                    backgroundColor : '#114F79',
+                },
+                headerTitleStyle: {
+                    fontWeight : 'bold',
+                    alignItems : 'center'
+                }
+            }}>
+                <CUStack.Screen name = "Change Username" component ={ChangeUsernameScreen} options = {{
+                    headerLeft : () => (
+
+                    <Icon.Button name="ios-menu" size = {25} backgroundColor='#0E2742'
+                    onPress = {() => {navigation.openDrawer()}}> </Icon.Button>
+                    )
+                }}
+                />
+
+     </CUStack.Navigator>
+     );
+}
+
+
 
 const LSStackScreen = ({navigation}) => {
 return(
@@ -111,27 +212,116 @@ return(
      </LSStack.Navigator>
      );
 }
-const App: () => Node = () => {
 
-const [isLoading,setIsLoading] = React.useState(true);
-const[userToken, setUserToken] = React.useState(null);
+const LCStackScreen = ({navigation}) => {
+return(
+     <LCStack.Navigator screenOptions = {{
+                headerStyle :{
+                    backgroundColor : '#0E2742',
+                },
+                footerStyle :{
+                    backgroundColor : '#114F79',
+                },
+                headerTintColor : '#fff',
+                cardStyle : {
+                    backgroundColor : '#114F79',
+                },
+                headerTitleStyle: {
+                    fontWeight : 'bold',
+                    alignItems : 'center'
+                }
+            }}>
+                <LCStack.Screen name = "Locker Configuration" component ={LockerConfiguration} options = {{
+                headerLeft : () => (
+
+                  <Icon.Button name="ios-menu" size = {25} backgroundColor='#0E2742'
+                   onPress = {() => {navigation.openDrawer()}}> </Icon.Button>
+                 )}}
+                 />
+     </LCStack.Navigator>
+     );
+}
+const App: () => Node = () => {
+//
+//const [isLoading,setIsLoading] = React.useState(true);
+//const[userToken, setUserToken] = React.useState(null);
+
+    const initialLoginState = {
+        isLoading: true,
+        userName: null,
+        userToken: null,
+    };
+
+    const loginReducer = (prevState,action) => {
+        switch(action.type){
+            case 'RETRIEVE_TOKEN':
+                return{
+                    ...prevState,
+                    userToken:action.token,
+                    isLoading: false,
+                };
+            case 'LOGIN':
+                return{
+                    ...prevState,
+                    userName : action.id,
+                    userToken:action.token,
+                    isLoading: false,
+                };
+            case 'UPDATE_USER':
+                return{
+                    ...prevState,
+                    userName : action.id,
+                    userToken: action.token,
+                    isLoading: false,
+                };
+            case 'LOGOUT':
+                return{
+                    ...prevState,
+                    userName : null,
+                    userToken : null,
+                    isLoading: false,
+                };
+            case 'REGISTER':
+                return{
+                    ...prevState,
+                    userName: action.id,
+                    userToken: action.token,
+                    isLoading: false,
+                };
+        }
+    };
+
+    const [loginState,dispatch] = React.useReducer(loginReducer,initialLoginState);
 
     const authContext = React.useMemo(() => ({
-        signIn: () => {
-            setUserToken('fgkj');
-            setIsLoading(false);
+        signIn: (userName,password) => {
+                    //setUserToken('fgkj');
+                //setIsLoading(false);
+            let userToken;
+            userToken = null;
+            if(userName == 'user' && password == 'pass'){
+                userToken = userName;
+            }
+            dispatch({type: 'LOGIN', id: userName , token : userToken});
         },
         signOut: () => {
-            setUserToken(null);
-            setIsLoading(false);
+//            setUserToken(null);
+//            setIsLoading(false);
+            dispatch({type: 'LOGOUT'});
         },
         signUp: () => {
-            setUserToken('fgkj');
-            setIsLoading(false);
+//            setUserToken('fgkj');
+//            setIsLoading(false);
+        },
+        updateUsername: (userName) => {
+            let user;
+            user = null;
+            user = userName;
+            dispatch({type : 'UPDATE_USER', id : userName, token : user});
         },
         getUser: () => {
             return (
-                userToken
+                loginState.userToken
             );
         }
     }));
@@ -139,11 +329,14 @@ const[userToken, setUserToken] = React.useState(null);
 
     useEffect(() =>{
         setTimeout(() => {
-            setIsLoading(false);
+//            setIsLoading(false);
+        let userToken;;
+        userToken = 'fgg';
+        dispatch({type: 'RETRIEVE_TOKEN', token : loginState.userName});
         },1000);
     },[]);
 
-if(isLoading){
+if(loginState.isLoading){
     return(
         <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
             <ActivityIndicator size ="large"/>
@@ -154,11 +347,14 @@ if(isLoading){
 return(
 <AuthContext.Provider value={authContext}>
     <NavigationContainer>
-        {userToken !== null ? (
+        {loginState.userToken !== null ? (
             <Drawer.Navigator drawerContent={props => <DrawerContent {...props}/>}>
               <Drawer.Screen name="User Home Page" component ={HomeStackScreen}/>
               <Drawer.Screen name="Locker Checkout" component ={LSStackScreen}/>
-              <Drawer.Screen name="Locker Configuration" component ={LockerConfiguration}/>
+              <Drawer.Screen name="Locker Configuration" component ={LCStackScreen}/>
+              <Drawer.Screen name ="Settings" component={SettingsStackScreen}/>
+              <Drawer.Screen name ="Change Password" component={CPStackScreen}/>
+              <Drawer.Screen name ="Change Username" component={CUStackScreen}/>
              </Drawer.Navigator>
         )
         :
@@ -166,28 +362,6 @@ return(
             <RootStackScreen/>
         )
         }
-       {/* <Stack.Navigator screenOptions = {{
-            headerStyle :{
-                backgroundColor : '#0E2742',
-            },
-            footerStyle :{
-                backgroundColor : '#114F79',
-            },
-            headerTintColor : '#fff',
-            cardStyle : {
-                backgroundColor : '#114F79',
-            },
-            headerTitleStyle: {
-                fontWeight : 'bold',
-                alignItems : 'center'
-            }
-        }}>
-            <Stack.Screen name = "Login" component ={Login}/>
-            <Stack.Screen name = "User Home Page" component ={HomeScreen}/>
-            <Stack.Screen name = "Locker Checkout" component ={LockerCheckout}/>
-            <Stack.Screen name = "Locker Configuration" component ={LockerConfiguration}/>
-            <Stack.Screen name = "Settings" component = {Settings}/>
-        </Stack.Navigator>*/}
     </NavigationContainer>
 </AuthContext.Provider>
 )};

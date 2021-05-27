@@ -28,7 +28,7 @@ export function DrawerContent(props) {
 const {signOut} = React.useContext(AuthContext);
 const {getUser} = React.useContext(AuthContext);
 
-const userName = `${getUser()}`;
+let userName = `${getUser()}`;
 
     const [isDarkTheme, setIsDarkTheme] = React.useState(false);
 
@@ -51,7 +51,7 @@ return(
                          />
                          <View>
                             <Title>
-                               {userName}
+                               {getUser()}
                             </Title>
                             <Caption>
 
@@ -103,7 +103,7 @@ return(
                          />
                     )}
                     label = "Settings"
-                    onPress={() => {signOut()}}
+                    onPress={() => {props.navigation.navigate("Settings")}}
                 />
 
             </Drawer.Section>
