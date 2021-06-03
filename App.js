@@ -38,6 +38,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import { DrawerContent } from './screens/DrawerContent';
+import { AdminDrawer } from './screens/AdminDrawer';
 
 import HomeScreen from './screens/User_HomeScreen.js';
 import LockerCheckout from './screens/LockerCheckout.js';
@@ -56,6 +57,7 @@ const CUStack = createStackNavigator();
 const LCStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const HomeStack = createStackNavigator();
+const AdminHomeStack = createStackNavigator();
 const SettingStack = createStackNavigator();
 
 const HomeStackScreen = ({navigation}) => {
@@ -86,6 +88,37 @@ return(
                 />
 
      </HomeStack.Navigator>
+     );
+}
+
+const AdminStackScreen = ({navigation}) => {
+return(
+     <AdminHomeStack.Navigator screenOptions = {{
+                headerStyle :{
+                    backgroundColor : '#0E2742',
+                },
+                footerStyle :{
+                    backgroundColor : '#114F79',
+                },
+                headerTintColor : '#fff',
+                cardStyle : {
+                    backgroundColor : '#114F79',
+                },
+                headerTitleStyle: {
+                    fontWeight : 'bold',
+                    alignItems : 'center'
+                }
+            }}>
+                <AdminHomeStack.Screen name = "Admin Home Page" component ={HomeScreen} options = {{
+                    headerLeft : () => (
+
+                    <Icon.Button name="ios-menu" size = {25} backgroundColor='#0E2742'
+                    onPress = {() => {navigation.openDrawer()}}> </Icon.Button>
+                    )
+                }}
+                />
+
+     </AdminHomeStack.Navigator>
      );
 }
 
@@ -152,6 +185,37 @@ return(
 }
 
 const CUStackScreen = ({navigation}) => {
+return(
+     <CUStack.Navigator screenOptions = {{
+                headerStyle :{
+                    backgroundColor : '#0E2742',
+                },
+                footerStyle :{
+                    backgroundColor : '#114F79',
+                },
+                headerTintColor : '#fff',
+                cardStyle : {
+                    backgroundColor : '#114F79',
+                },
+                headerTitleStyle: {
+                    fontWeight : 'bold',
+                    alignItems : 'center'
+                }
+            }}>
+                <CUStack.Screen name = "Change Username" component ={ChangeUsernameScreen} options = {{
+                    headerLeft : () => (
+
+                    <Icon.Button name="ios-menu" size = {25} backgroundColor='#0E2742'
+                    onPress = {() => {navigation.openDrawer()}}> </Icon.Button>
+                    )
+                }}
+                />
+
+     </CUStack.Navigator>
+     );
+}
+
+const AdminCUStackScreen = ({navigation}) => {
 return(
      <CUStack.Navigator screenOptions = {{
                 headerStyle :{
@@ -250,6 +314,8 @@ const App: () => Node = () => {
         isLoading: true,
         userName: null,
         userToken: null,
+        ownedNode : null,
+        isAdmin : false,
     };
 
     const loginReducer = (prevState,action) => {
@@ -267,6 +333,14 @@ const App: () => Node = () => {
                     userToken:action.token,
                     isLoading: false,
                 };
+            case 'LOGIN_ADMIN':
+                return{
+                    ...prevState,
+                    userName : action.id,
+                    userToken:action.token,
+                    isAdmin : true,
+                    isLoading: false,
+                };
             case 'UPDATE_USER':
                 return{
                     ...prevState,
@@ -279,6 +353,7 @@ const App: () => Node = () => {
                     ...prevState,
                     userName : null,
                     userToken : null,
+                    isAdmin : false,
                     isLoading: false,
                 };
             case 'REGISTER':
@@ -288,6 +363,20 @@ const App: () => Node = () => {
                     userToken: action.token,
                     isLoading: false,
                 };
+            case 'UPDATE_OWNERSHIP':
+                return{
+                    ...prevState,
+                    ownedNode: action.id,
+                    isLoading: false,
+                };
+            case 'RELEASE':
+                return{
+                    ...prevState,
+                    ownedNode: null,
+                    isLoading: false,
+                };
+
+
         }
     };
 
@@ -301,8 +390,12 @@ const App: () => Node = () => {
             userToken = null;
             if(userName == 'user' && password == 'pass'){
                 userToken = userName;
+                dispatch({type: 'LOGIN', id: userName , token : userToken});
+            }else if(userName == 'admin' && password == 'pass'){
+                userToken = userName;
+                dispatch({type : 'LOGIN_ADMIN', id : userName, token : userToken});
             }
-            dispatch({type: 'LOGIN', id: userName , token : userToken});
+
         },
         signOut: () => {
 //            setUserToken(null);
@@ -323,7 +416,22 @@ const App: () => Node = () => {
             return (
                 loginState.userToken
             );
+        },
+        updateOwn: (ownedNode) => {
+           let owner;
+           owner = null;
+           owner = ownedNode;
+           dispatch({type: 'UPDATE_OWNERSHIP', id : ownedNode});
+        },
+        getOwned: () => {
+            return (
+                loginState.ownedNode
+            );
+        },
+        release: () => {
+            dispatch({type: 'RELEASE'});
         }
+
     }));
 
 
@@ -348,6 +456,8 @@ return(
 <AuthContext.Provider value={authContext}>
     <NavigationContainer>
         {loginState.userToken !== null ? (
+
+            !loginState.isAdmin ? (
             <Drawer.Navigator drawerContent={props => <DrawerContent {...props}/>}>
               <Drawer.Screen name="User Home Page" component ={HomeStackScreen}/>
               <Drawer.Screen name="Locker Checkout" component ={LSStackScreen}/>
@@ -355,7 +465,20 @@ return(
               <Drawer.Screen name ="Settings" component={SettingsStackScreen}/>
               <Drawer.Screen name ="Change Password" component={CPStackScreen}/>
               <Drawer.Screen name ="Change Username" component={CUStackScreen}/>
-             </Drawer.Navigator>
+           </Drawer.Navigator>
+              )
+              :
+              (
+           <Drawer.Navigator drawerContent={props => <AdminDrawer {...props}/>}>
+              <Drawer.Screen name="Admin Home Page" component ={AdminStackScreen}/>
+              <Drawer.Screen name="Locker Checkout" component ={LSStackScreen}/>
+              <Drawer.Screen name ="Settings" component={SettingsStackScreen}/>
+              <Drawer.Screen name ="Change Password" component={CPStackScreen}/>
+              <Drawer.Screen name ="Change Username" component={CUStackScreen}/>
+           </Drawer.Navigator>
+              )
+
+
         )
         :
         (
