@@ -5,41 +5,53 @@ import {useTheme } from '@react-naviagtion/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 
-const AdminHome = ({navigation}) => {
+
+const AdminSettings = ({navigation}) => {
     return (
     <View style= {styles.button}>
          <TouchableOpacity
-             style = {[styles.signIn,{marginTop : 50}, {paddingHorizontal :50}]}
-             onPress= {() => {navigation.navigate('Locker Configuration')}}>
+             style = {[styles.signIn,{marginTop : 50},{paddingHorizontal :50}]}
+             onPress= {() => {navigation.navigate('Change Username')}}>
             <LinearGradient
               colors ={['#08d4c4','#01ab9d']}
               style={styles.signIn}
             >
                 <Text style ={[styles.textSign,{
                     color:'#fff'
-                }]}>Locker Configuration</Text>
+                }]}>Change Username</Text>
             </LinearGradient>
           </TouchableOpacity>
 
          <TouchableOpacity
              style = {[styles.signIn,{marginTop : 50}, {paddingHorizontal :50}]}
-             onPress= {() => {navigation.navigate('Settings')}}>
+             onPress= {() => {navigation.navigate('Change Password')}}>
             <LinearGradient
               colors ={['#08d4c4','#01ab9d']}
               style={styles.signIn}
             >
                 <Text style ={[styles.textSign,{
                     color:'#fff'
-                }]}>Settings</Text>
+                }]}>Change Password</Text>
             </LinearGradient>
           </TouchableOpacity>
+
+       <TouchableOpacity
+           style = {[styles.signIn,{marginTop : 300}, {paddingHorizontal :50}]}
+           onPress= {() => {navigation.navigate('Admin Home Page')}}>
+          <LinearGradient
+            colors ={['#08d4c4','#01ab9d']}
+            style={styles.signIn}
+          >
+              <Text style ={[styles.textSign,{
+                  color:'#fff'
+              }]}>Return Home</Text>
+          </LinearGradient>
+        </TouchableOpacity>
     </View>
     );
 };
 
-
-
-export default AdminHome;
+export default AdminSettings;
 
 const styles = StyleSheet.create({
     container: {

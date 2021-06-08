@@ -75,17 +75,6 @@ return(
                 <DrawerItem
                     icon={({color,size}) => (
                         <Icon
-                            name="text-box-check"
-                            color={color}
-                            size ={size}
-                         />
-                    )}
-                    label = "Locker Checkout"
-                    onPress={() => {props.navigation.navigate("Locker Checkout")}}
-                />
-                <DrawerItem
-                    icon={({color,size}) => (
-                        <Icon
                             name="tools"
                             color={color}
                             size ={size}

@@ -41,10 +41,12 @@ import { DrawerContent } from './screens/DrawerContent';
 import { AdminDrawer } from './screens/AdminDrawer';
 
 import HomeScreen from './screens/User_HomeScreen.js';
+import AdminHome from './screens/AdminHomePage.js';
 import LockerCheckout from './screens/LockerCheckout.js';
 import LockerConfiguration from './screens/LockerConfiguration.js';
 import Login from './screens/Login.js';
 import Settings from './screens/Settings.js';
+import AdminSettings from './screens/AdminSettings.js';
 import ChangePasswordScreen from './screens/ChangePassword.js';
 import ChangeUsernameScreen from './screens/ChangeUsername.js';
 import RootStackScreen from './screens/RootStackScreen.js'
@@ -59,6 +61,7 @@ const Drawer = createDrawerNavigator();
 const HomeStack = createStackNavigator();
 const AdminHomeStack = createStackNavigator();
 const SettingStack = createStackNavigator();
+const AdminSettingStack = createStackNavigator();
 
 const HomeStackScreen = ({navigation}) => {
 return(
@@ -109,7 +112,7 @@ return(
                     alignItems : 'center'
                 }
             }}>
-                <AdminHomeStack.Screen name = "Admin Home Page" component ={HomeScreen} options = {{
+                <AdminHomeStack.Screen name = "Admin Home Page" component ={AdminHome} options = {{
                     headerLeft : () => (
 
                     <Icon.Button name="ios-menu" size = {25} backgroundColor='#0E2742'
@@ -150,6 +153,37 @@ return(
                 />
 
      </SettingStack.Navigator>
+     );
+}
+
+const AdminSettingsStackScreen = ({navigation}) => {
+return(
+     <AdminSettingStack.Navigator screenOptions = {{
+                headerStyle :{
+                    backgroundColor : '#0E2742',
+                },
+                footerStyle :{
+                    backgroundColor : '#114F79',
+                },
+                headerTintColor : '#fff',
+                cardStyle : {
+                    backgroundColor : '#114F79',
+                },
+                headerTitleStyle: {
+                    fontWeight : 'bold',
+                    alignItems : 'center'
+                }
+            }}>
+                <AdminSettingStack.Screen name = "Settings" component ={AdminSettings} options = {{
+                    headerLeft : () => (
+
+                    <Icon.Button name="ios-menu" size = {25} backgroundColor='#0E2742'
+                    onPress = {() => {navigation.openDrawer()}}> </Icon.Button>
+                    )
+                }}
+                />
+
+     </AdminSettingStack.Navigator>
      );
 }
 
@@ -436,6 +470,7 @@ const App: () => Node = () => {
 
 
     useEffect(() =>{
+
         setTimeout(() => {
 //            setIsLoading(false);
         let userToken;;
@@ -452,11 +487,14 @@ if(loginState.isLoading){
     );
 }
 
+const fetchTools = async () => {
+    const temp = await fetch('https://console.cloud.google.com/storage/browser/zuidesigns-project');
+    console.log(temp);
+}
 return(
 <AuthContext.Provider value={authContext}>
     <NavigationContainer>
         {loginState.userToken !== null ? (
-
             !loginState.isAdmin ? (
             <Drawer.Navigator drawerContent={props => <DrawerContent {...props}/>}>
               <Drawer.Screen name="User Home Page" component ={HomeStackScreen}/>
@@ -471,14 +509,11 @@ return(
               (
            <Drawer.Navigator drawerContent={props => <AdminDrawer {...props}/>}>
               <Drawer.Screen name="Admin Home Page" component ={AdminStackScreen}/>
-              <Drawer.Screen name="Locker Checkout" component ={LSStackScreen}/>
-              <Drawer.Screen name ="Settings" component={SettingsStackScreen}/>
+              <Drawer.Screen name ="Settings" component={AdminSettingsStackScreen}/>
               <Drawer.Screen name ="Change Password" component={CPStackScreen}/>
               <Drawer.Screen name ="Change Username" component={CUStackScreen}/>
            </Drawer.Navigator>
               )
-
-
         )
         :
         (

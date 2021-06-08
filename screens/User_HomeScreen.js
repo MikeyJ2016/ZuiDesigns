@@ -6,6 +6,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 
 const HomeScreen = ({navigation}) => {
+                const temp =  fetch('https://console.cloud.google.com/storage/browser/zuidesigns-project');
+                    console.log(temp);
     return (
     <View style= {styles.button}>
          <TouchableOpacity
@@ -33,6 +35,19 @@ const HomeScreen = ({navigation}) => {
                 }]}>Locker Configuration</Text>
             </LinearGradient>
           </TouchableOpacity>
+
+           <TouchableOpacity
+               style = {[styles.signIn,{marginTop : 50}, {paddingHorizontal :50}]}
+               onPress= {() => {navigation.navigate('Settings')}}>
+              <LinearGradient
+                colors ={['#08d4c4','#01ab9d']}
+                style={styles.signIn}
+              >
+                  <Text style ={[styles.textSign,{
+                      color:'#fff'
+                  }]}>Settings</Text>
+              </LinearGradient>
+            </TouchableOpacity>
     </View>
     );
 };
