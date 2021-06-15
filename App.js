@@ -7,13 +7,15 @@
  */
 
 import 'react-native-gesture-handler';
-import React,{useEffect} from 'react';
+import React,{useEffect, useState} from 'react';
 import type {Node} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {AuthContext } from './Components/context.js';
+import {firebase} from 'firebase';
+
 
 
 import {
@@ -49,8 +51,8 @@ import Settings from './screens/Settings.js';
 import AdminSettings from './screens/AdminSettings.js';
 import ChangePasswordScreen from './screens/ChangePassword.js';
 import ChangeUsernameScreen from './screens/ChangeUsername.js';
+import AdminLockerSelectionScreen from './screens/AdminLockerSelectionScreen.js';
 import RootStackScreen from './screens/RootStackScreen.js'
-
 
 
 const LSStack = createStackNavigator();
@@ -62,6 +64,38 @@ const HomeStack = createStackNavigator();
 const AdminHomeStack = createStackNavigator();
 const SettingStack = createStackNavigator();
 const AdminSettingStack = createStackNavigator();
+const AdminLS = createStackNavigator();
+
+const AdminLSScreen = ({navigation}) => {
+    return(
+         <AdminLS.Navigator screenOptions = {{
+                    headerStyle :{
+                        backgroundColor : '#0E2742',
+                    },
+                    footerStyle :{
+                        backgroundColor : '#114F79',
+                    },
+                    headerTintColor : '#fff',
+                    cardStyle : {
+                        backgroundColor : '#114F79',
+                    },
+                    headerTitleStyle: {
+                        fontWeight : 'bold',
+                        alignItems : 'center'
+                    }
+                }}>
+                    <AdminLS.Screen name = "Locker Selection" component ={AdminLockerSelectionScreen} options = {{
+                        headerLeft : () => (
+
+                        <Icon.Button name="ios-menu" size = {25} backgroundColor='#0E2742'
+                        onPress = {() => {navigation.openDrawer()}}> </Icon.Button>
+                        )
+                    }}
+                    />
+
+         </AdminLS.Navigator>
+         );
+}
 
 const HomeStackScreen = ({navigation}) => {
 return(
@@ -281,7 +315,6 @@ return(
 }
 
 
-
 const LSStackScreen = ({navigation}) => {
 return(
      <LSStack.Navigator screenOptions = {{
@@ -344,6 +377,7 @@ const App: () => Node = () => {
 //const [isLoading,setIsLoading] = React.useState(true);
 //const[userToken, setUserToken] = React.useState(null);
 
+
     const initialLoginState = {
         isLoading: true,
         userName: null,
@@ -351,6 +385,7 @@ const App: () => Node = () => {
         ownedNode : null,
         isAdmin : false,
     };
+
 
     const loginReducer = (prevState,action) => {
         switch(action.type){
@@ -404,6 +439,8 @@ const App: () => Node = () => {
                     isLoading: false,
                 };
             case 'RELEASE':
+
+
                 return{
                     ...prevState,
                     ownedNode: null,
@@ -463,7 +500,11 @@ const App: () => Node = () => {
             );
         },
         release: () => {
-            dispatch({type: 'RELEASE'});
+            if(loginState.ownedNode !== null){
+                loginState.ownedNode.isOwned = false;
+                loginState.ownedNode.isSelected = false;
+                dispatch({type: 'RELEASE'});
+            }
         }
 
     }));
@@ -487,14 +528,12 @@ if(loginState.isLoading){
     );
 }
 
-const fetchTools = async () => {
-    const temp = await fetch('https://console.cloud.google.com/storage/browser/zuidesigns-project');
-    console.log(temp);
-}
+
 return(
 <AuthContext.Provider value={authContext}>
     <NavigationContainer>
         {loginState.userToken !== null ? (
+
             !loginState.isAdmin ? (
             <Drawer.Navigator drawerContent={props => <DrawerContent {...props}/>}>
               <Drawer.Screen name="User Home Page" component ={HomeStackScreen}/>
@@ -509,6 +548,7 @@ return(
               (
            <Drawer.Navigator drawerContent={props => <AdminDrawer {...props}/>}>
               <Drawer.Screen name="Admin Home Page" component ={AdminStackScreen}/>
+              <Drawer.Screen name="Locker Selection" component ={AdminLSScreen}/>
               <Drawer.Screen name ="Settings" component={AdminSettingsStackScreen}/>
               <Drawer.Screen name ="Change Password" component={CPStackScreen}/>
               <Drawer.Screen name ="Change Username" component={CUStackScreen}/>

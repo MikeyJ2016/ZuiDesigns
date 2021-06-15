@@ -80,8 +80,8 @@ return(
                             size ={size}
                          />
                     )}
-                    label = "Locker Configuration"
-                    onPress={() => {props.navigation.navigate("Locker Configuration")}}
+                    label = "Locker Selection"
+                    onPress={() => {props.navigation.navigate("Locker Selection")}}
                 />
                 <DrawerItem
                     icon={({color,size}) => (

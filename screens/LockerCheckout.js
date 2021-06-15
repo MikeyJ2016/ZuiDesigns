@@ -82,7 +82,7 @@ const LockerCheckout = ({navigation}) => {
                   if(data.isSelected && !data.isOwned){
                     data.isOwned = true;
                     updateOwn(data);
-                    navigation.goBack();
+                    navigation.navigate('User Home Page');
                   }
               }else{
                 alert("You already own Locker " + `${temp.id}`);
