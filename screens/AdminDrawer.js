@@ -81,7 +81,7 @@ return(
                          />
                     )}
                     label = "Locker Selection"
-                    onPress={() => {props.navigation.navigate("Locker Selection")}}
+                    onPress={() => {props.navigation.navigate("Admin Locker Selection")}}
                 />
                 <DrawerItem
                     icon={({color,size}) => (

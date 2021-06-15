@@ -10,7 +10,7 @@ const AdminHome = ({navigation}) => {
     <View style= {styles.button}>
          <TouchableOpacity
              style = {[styles.signIn,{marginTop : 50}, {paddingHorizontal :50}]}
-             onPress= {() => {navigation.navigate('Locker Selection')}}>
+             onPress= {() => {navigation.navigate('Admin Locker Selection')}}>
             <LinearGradient
               colors ={['#08d4c4','#01ab9d']}
               style={styles.signIn}

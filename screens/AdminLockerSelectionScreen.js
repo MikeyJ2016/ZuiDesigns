@@ -69,26 +69,18 @@ const AdminLockerSelectionScreen = ({navigation}) => {
             prevData.isSelected = false
           }
         })
-
         setData(newData);
       };
 
         const selection = () => {
           const newData = [...data];
-          let temp = getOwned();
 
-          newData.forEach((data) => {
-              if(getOwned() == null){
-                  if(data.isSelected && !data.isOwned){
-                    data.isOwned = true;
-                    updateOwn(data);
-                    navigation.navigate('User Home Page');
-                  }
-              }else{
-                alert("You already own Locker " + `${temp.id}`);
+            newData.forEach((data) => {
+                  if(data.isSelected ){
+                    navigation.navigate('Admin Locker Configuration', {locker : data});
               }
-          })
-        };
+              });
+        }
 
     return (
     <View style={styles.container}>
@@ -130,7 +122,7 @@ const AdminLockerSelectionScreen = ({navigation}) => {
                         >
                             <Text style ={[styles.textSign,{
                                 color:'#fff'
-                            }]}>Checkout</Text>
+                            }]}>Configure</Text>
                         </LinearGradient>
                     </TouchableOpacity>
 

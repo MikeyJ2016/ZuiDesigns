@@ -52,6 +52,7 @@ import AdminSettings from './screens/AdminSettings.js';
 import ChangePasswordScreen from './screens/ChangePassword.js';
 import ChangeUsernameScreen from './screens/ChangeUsername.js';
 import AdminLockerSelectionScreen from './screens/AdminLockerSelectionScreen.js';
+import AdminConfigureScreen from './screens/AdminConfigureScreen.js';
 import RootStackScreen from './screens/RootStackScreen.js'
 
 
@@ -65,6 +66,7 @@ const AdminHomeStack = createStackNavigator();
 const SettingStack = createStackNavigator();
 const AdminSettingStack = createStackNavigator();
 const AdminLS = createStackNavigator();
+const AdminLC = createStackNavigator();
 
 const AdminLSScreen = ({navigation}) => {
     return(
@@ -84,7 +86,7 @@ const AdminLSScreen = ({navigation}) => {
                         alignItems : 'center'
                     }
                 }}>
-                    <AdminLS.Screen name = "Locker Selection" component ={AdminLockerSelectionScreen} options = {{
+                    <AdminLS.Screen name = "Admin Locker Selection" component ={AdminLockerSelectionScreen} options = {{
                         headerLeft : () => (
 
                         <Icon.Button name="ios-menu" size = {25} backgroundColor='#0E2742'
@@ -94,6 +96,37 @@ const AdminLSScreen = ({navigation}) => {
                     />
 
          </AdminLS.Navigator>
+         );
+}
+
+const AdminLCScreen = ({navigation}) => {
+    return(
+         <AdminLC.Navigator screenOptions = {{
+                    headerStyle :{
+                        backgroundColor : '#0E2742',
+                    },
+                    footerStyle :{
+                        backgroundColor : '#114F79',
+                    },
+                    headerTintColor : '#fff',
+                    cardStyle : {
+                        backgroundColor : '#114F79',
+                    },
+                    headerTitleStyle: {
+                        fontWeight : 'bold',
+                        alignItems : 'center'
+                    }
+                }}>
+                    <AdminLC.Screen name = "Admin Locker Configuration" component ={AdminConfigureScreen} options = {{
+                        headerLeft : () => (
+
+                        <Icon.Button name="ios-menu" size = {25} backgroundColor='#0E2742'
+                        onPress = {() => {navigation.openDrawer()}}> </Icon.Button>
+                        )
+                    }}
+                    />
+
+         </AdminLC.Navigator>
          );
 }
 
@@ -548,7 +581,8 @@ return(
               (
            <Drawer.Navigator drawerContent={props => <AdminDrawer {...props}/>}>
               <Drawer.Screen name="Admin Home Page" component ={AdminStackScreen}/>
-              <Drawer.Screen name="Locker Selection" component ={AdminLSScreen}/>
+              <Drawer.Screen name="Admin Locker Selection" component ={AdminLSScreen}/>
+              <Drawer.Screen name="Admin Locker Configuration" component ={AdminLCScreen}/>
               <Drawer.Screen name ="Settings" component={AdminSettingsStackScreen}/>
               <Drawer.Screen name ="Change Password" component={CPStackScreen}/>
               <Drawer.Screen name ="Change Username" component={CUStackScreen}/>
