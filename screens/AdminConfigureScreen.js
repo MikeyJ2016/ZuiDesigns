@@ -25,39 +25,74 @@ const AdminConfigureScreen = ({route, navigation}) => {
         <Text style ={[styles.textSign,{
           color:'#fff'
         }]}> Selected : {message} </Text>
-      </LinearGradient>
-        <TouchableOpacity
-            style = {[styles.signIn,{marginTop : 50},{paddingHorizontal :75}]}
-        >
-            <LinearGradient
-                colors ={['#08d4c4','#01ab9d']}
-                style={styles.side_by_side}
-            >
-                <Text style ={[styles.textSign,{
-                    color:'#fff'
-                }]}>Lock/UnLock</Text>
-            </LinearGradient>
-        </TouchableOpacity>
-        <TouchableOpacity
-            style = {[styles.signIn,{marginTop : 50},{paddingHorizontal :75}]}
-            onPress={() => release()}
-        >
-            <LinearGradient
-                colors ={['#08d4c4','#01ab9d']}
-                style={styles.side_by_side}
-            >
-                <Text style ={[styles.textSign,{
-                    color:'#fff'
-                }]}>Release Locker</Text>
-            </LinearGradient>
-        </TouchableOpacity>
+        <Text style ={[styles.textSign,{
+                  color:'#fff'
+                }]}> Owner : {message} </Text>
+        </LinearGradient>
+
+     <View style={styles.row}>
+            <TouchableOpacity
+                        style = {[styles.side_by_side ]}
+                     >
+                        <LinearGradient
+                            colors ={['#08d4c4','#01ab9d']}
+                            style={styles.side_by_side}
+                        >
+                            <Text style ={[styles.textSign,{
+                                color:'#fff'
+                            }]}>Lock/UnLock</Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                           style = {[styles.side_by_side ]}
+                            >
+                             <LinearGradient
+                             colors ={['#08d4c4','#01ab9d']}
+                             style={styles.side_by_side}
+                              >
+                                <Text style ={[styles.textSign,{
+                              color:'#fff'
+                           }]}>Remove Owner</Text>
+                          </LinearGradient>
+                        </TouchableOpacity>
+        </View>
+
+        <View style={styles.row}>
+                    <TouchableOpacity
+                                style = {[styles.side_by_side ]}
+                             >
+                                <LinearGradient
+                                    colors ={['#08d4c4','#01ab9d']}
+                                    style={styles.side_by_side}
+                                >
+                                    <Text style ={[styles.textSign,{
+                                        color:'#fff'
+                                    }]}>Add Locker to Network</Text>
+                                </LinearGradient>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                   style = {[styles.side_by_side ]}
+                                    >
+                                     <LinearGradient
+                                     colors ={['#08d4c4','#01ab9d']}
+                                     style={styles.side_by_side}
+                                      >
+                                        <Text style ={[styles.textSign,{
+                                      color:'#fff'
+                                   }]}>Remove Locker from Network</Text>
+                                  </LinearGradient>
+                                </TouchableOpacity>
+                </View>
+
 
     <View style={styles.row}>
         <Text style ={[styles.textSign,{
             color:'#fff',
             paddingHorizontal : 20,
             textAlign: 'center',
-        }]}>Digital Output Voltage</Text>
+        }]}>Digital Input Voltage</Text>
 
         <Text style ={[styles.textSign,{
             color:'#fff',
@@ -78,6 +113,8 @@ const AdminConfigureScreen = ({route, navigation}) => {
         flexDirection: 'row',
         flex : 1
       }}>
+
+
             <LinearGradient
                 colors ={['#fff','#fff']}
                 style={[styles.side_by_side,{marginHorizontal : 10}]}
@@ -106,6 +143,7 @@ const AdminConfigureScreen = ({route, navigation}) => {
        flexDirection: 'row',
        flex : 1
      }}>
+
         <TouchableOpacity
             style = {[styles.side_by_side ]}
          >
@@ -206,7 +244,7 @@ const styles = StyleSheet.create({
     },
     side_by_side : {
             width: '100%',
-            height: 50,
+            height: 70,
             justifyContent: 'center',
             alignItems: 'center',
             borderRadius: 5,
@@ -214,12 +252,13 @@ const styles = StyleSheet.create({
     },
     textSign: {
         fontSize: 18,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        textAlign: 'center',A
     },
     row: {
-      marginTop: 50,
-      marginLeft: 50,
-      marginRight: 50,
+      marginTop: 30,
+      marginLeft: 30,
+      marginRight: 30,
       marginHorizontal : 400 ,
       paddingHorizontal : 20,
       flexDirection: 'row',
