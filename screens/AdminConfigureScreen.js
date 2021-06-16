@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
     textSign: {
         fontSize: 18,
         fontWeight: 'bold',
-        textAlign: 'center',A
+        textAlign: 'center',
     },
     row: {
       marginTop: 30,
