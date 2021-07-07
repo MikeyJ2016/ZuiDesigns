@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "207848661234",
+    "project_id": "reactnativeproject-c30df",
+    "storage_bucket": "reactnativeproject-c30df.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:207848661234:android:87feac4b98805fb6faf06b",
+        "android_client_info": {
+          "package_name": "com.zuidesigns"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "207848661234-leve5758uvbu125jplu8jvf6ikh27fpd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAW-qUDbfB7WJgkqYKAifAFX3tWSYrPi_E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "207848661234-leve5758uvbu125jplu8jvf6ikh27fpd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
