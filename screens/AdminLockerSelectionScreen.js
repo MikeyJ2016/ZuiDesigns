@@ -5,10 +5,20 @@ import LinearGradient from 'react-native-linear-gradient';
 import  {useState} from 'react';
 import Feather from 'react-native-vector-icons/Feather';
 import {AuthContext } from '../Components/context.js';
+import { useEffect} from 'react';
+import { ActivityIndicator} from 'react-native';
 
 const AdminLockerSelectionScreen = ({navigation}) => {
 
     const {updateOwn,getOwned} = React.useContext(AuthContext);
+
+useEffect(() => {
+    fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi')
+      .then((response) => response.json())
+      .then((json) => setData(json.lockers))
+      .catch((error) => console.error(error))
+      .finally(() => setLoading(false));
+  }, []);
 
   const [data, setData] = useState([
    {
