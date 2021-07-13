@@ -1,65 +1,75 @@
 import React from 'react';
-import {View, Text,Button,StyleSheet,FlatList, Statusbar,ScrollView,TouchableOpacity } from 'react-native'
+import {View, Text,Button,StyleSheet,FlatList, Statusbar,ScrollView,TouchableOpacity,ActivityIndicator } from 'react-native'
 import {useTheme } from '@react-naviagtion/native';
 import LinearGradient from 'react-native-linear-gradient';
-import  {useState} from 'react';
+import  {useState,useEffect} from 'react';
 import Feather from 'react-native-vector-icons/Feather';
 import {AuthContext } from '../Components/context.js';
 
 const LockerCheckout = ({navigation}) => {
 
     const {updateOwn,getOwned} = React.useContext(AuthContext);
+    const [data, setData] = React.useState([]);
+    const [isLoading, setLoading] = useState(true);
 
-  const [data, setData] = useState([
-   {
-    title :'one',
-    isSelected : false,
-    isOwned : false,
-    id : '1'
-   },
-   {
-    title :'two',
-    isSelected : false,
-    isOwned : false,
-    id : '2'
-   },
-   {
-    title :'three',
-    isSelected : false,
-    isOwned : false,
-    id : '3'
-   },
-    {
-     title :'four',
-     isSelected : false,
-     isOwned : false,
-     id : '4'
-    },
-   {
-    title :'five',
-    isSelected : false,
-    isOwned : false,
-    id : '5'
-   },
-   {
-    title :'six',
-    isSelected : false,
-    isOwned : false,
-    id : '6'
-   },
-   {
-    title :'seven',
-    isSelected : false,
-    isOwned : false,
-    id : '7'
-   },
-   {
-    title :'eight',
-    isSelected : false,
-    isOwned : false,
-    id : '8'
-   },
-  ]);
+     useEffect(() =>{
+          fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?')
+            .then(response => response.json())
+            .then(res => setData(res.users))
+            .catch((error) => console.error(error))
+            .finally(() => setLoading(false));
+    }, []);
+
+//  const [data, setData] = useState([
+//   {
+//    title :'one',
+//    isSelected : false,
+//    isOwned : false,
+//    id : '1'
+//   },
+//   {
+//    title :'two',
+//    isSelected : false,
+//    isOwned : false,
+//    id : '2'
+//   },
+//   {
+//    title :'three',
+//    isSelected : false,
+//    isOwned : false,
+//    id : '3'
+//   },
+//    {
+//     title :'four',
+//     isSelected : false,
+//     isOwned : false,
+//     id : '4'
+//    },
+//   {
+//    title :'five',
+//    isSelected : false,
+//    isOwned : false,
+//    id : '5'
+//   },
+//   {
+//    title :'six',
+//    isSelected : false,
+//    isOwned : false,
+//    id : '6'
+//   },
+//   {
+//    title :'seven',
+//    isSelected : false,
+//    isOwned : false,
+//    id : '7'
+//   },
+//   {
+//    title :'eight',
+//    isSelected : false,
+//    isOwned : false,
+//    id : '8'
+//   },
+//  ]);
       const pressHandler = (id) => {
         const newData = [...data];
         newData.forEach((prevData) => {
@@ -96,7 +106,7 @@ const LockerCheckout = ({navigation}) => {
       <View style={styles.container ,{height:300,width :300 ,
          borderWidth: 5, borderColor: 'white'  }}>
         <FlatList data = {data} keyExtractor={(item, index) => item.id} renderItem={({item}) =>
-        (item.isOwned ? null :
+        (false ? null :
               <TouchableOpacity style = {styles.signIn}
                 onPress = {() => pressHandler(item.id)}
                >
@@ -106,8 +116,9 @@ const LockerCheckout = ({navigation}) => {
                    >
                        <Text style ={[styles.textSign,{
                            color:'#000'
-                       }]}>Locker {item.title}</Text>
-                      {item.isSelected ?
+                       }]}>Locker {item.Username}</Text>
+                      {false ?
+
                       <Feather
                           name="check-circle"
                           color="green"

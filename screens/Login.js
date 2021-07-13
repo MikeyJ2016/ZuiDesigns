@@ -1,4 +1,5 @@
 import React from 'react';
+import {useEffect} from 'react';
 import {
     View,
     Text,
@@ -18,12 +19,30 @@ import {AuthContext } from '../Components/context.js';
 import { useTheme } from 'react-native-paper';
 
 const Login = ({navigation}) => {
+    const [tdata, setTData] = React.useState({items : [{}]});
+
     const [data,setData] = React.useState({
         username: '',
         password : '',
         check_textInputChange: false,
-        secureTextEntry : true
+        secureTextEntry : true,
+        validentry : true
     });
+
+     const test = async (username) =>{
+         let response = await fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=verifyUsername&username=' + `${username}`);
+         let res = await response.json();
+         if(Object.keys(res.users[0]).length === 0){
+            setData({
+                ...data,
+                validentry : false
+            });
+            return null;
+         }else{
+            setTData({items : res.users});
+            return res.users[0];
+         }
+    }
 
     const {signIn} = React.useContext(AuthContext);
 
@@ -66,9 +85,23 @@ const Login = ({navigation}) => {
         });
     }
 
-    const loginHandle = (username,password) => {
-        signIn(username,password);
-    }
+    const loginHandle = async (username,password) => {
+            let user = await test(username);
+            if(user !== null){
+                if(username == user.Username && password == user.Password){
+                    setData({
+                        ...data,
+                        validentry : true
+                    });
+                    signIn(user);
+                }else{
+                    setData({
+                        ...data,
+                        validentry : false
+                    });
+                }
+            }
+        }
 return (
 < View style = {styles.container} >
     <View style = {styles.header}>
@@ -131,18 +164,23 @@ return (
                     </TouchableOpacity>
            </View>
            <View style={styles.button}>
-                    <TouchableOpacity
-                        style = {styles.signIn}
-                        onPress= {() => {loginHandle(data.username,data.password)}}>
-                        <LinearGradient
-                            colors ={['#08d4c4','#01ab9d']}
-                            style={styles.signIn}
-                        >
-                            <Text style ={[styles.textSign,{
-                                color:'#fff'
-                            }]}>Login</Text>
-                        </LinearGradient>
-                    </TouchableOpacity>
+                {data.validentry ?
+                    null
+                    :
+                    <Text style = {{color : 'red'}}> Username or Password is not correct </Text>
+                }
+                <TouchableOpacity
+                    style = {styles.signIn}
+                    onPress= {() => {loginHandle(data.username,data.password)}}>
+                    <LinearGradient
+                        colors ={['#08d4c4','#01ab9d']}
+                        style={styles.signIn}
+                    >
+                        <Text style ={[styles.textSign,{
+                            color:'#fff'
+                        }]}>Login</Text>
+                    </LinearGradient>
+                </TouchableOpacity>
 
                     <TouchableOpacity
                         onPress={() => navigation.navigate('Create User')}

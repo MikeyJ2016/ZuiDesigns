@@ -81,6 +81,23 @@ const CreateAdmin = ({navigation}) => {
         });
     }
 
+        const createNewAdmin = async() => {
+             let response = await fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=verifyUsername&username=' + `${data.username}`);
+             let res = await response.json();
+             if(Object.keys(res.users[0]).length === 0 && data.username !== ''){
+                if(data.confirm_password == data.password){
+                  fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?username=' + `${data.username}` + '&userPassword=' + `${data.password}` + '&adminStatus=2')
+                    .catch((error) => console.error(error));
+                   navigation.goBack();
+                }else{
+                    alert("passwords do not match");
+                }
+             }else{
+                  alert("Username already exists");
+             }
+
+        }
+
     const updateConfirmSecureTextEntry = () => {
         setData({
             ...data,
@@ -198,7 +215,7 @@ return (
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        onPress={() => navigation.goBack()}
+                        onPress={() => createNewAdmin()}
                         style = {[styles.signIn,{
                             borderColor: '#009387',
                             borderWidth: 1,

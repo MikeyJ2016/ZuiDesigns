@@ -409,7 +409,7 @@ const App: () => Node = () => {
 //
 //const [isLoading,setIsLoading] = React.useState(true);
 //const[userToken, setUserToken] = React.useState(null);
-
+const userURL = "https://www.zuidesigns.com/sp2021/userExample.cgi?"
 
     const initialLoginState = {
         isLoading: true,
@@ -487,17 +487,17 @@ const App: () => Node = () => {
     const [loginState,dispatch] = React.useReducer(loginReducer,initialLoginState);
 
     const authContext = React.useMemo(() => ({
-        signIn: (userName,password) => {
+        signIn: async (user) => {
                     //setUserToken('fgkj');
                 //setIsLoading(false);
             let userToken;
             userToken = null;
-            if(userName == 'user' && password == 'pass'){
-                userToken = userName;
-                dispatch({type: 'LOGIN', id: userName , token : userToken});
-            }else if(userName == 'admin' && password == 'pass'){
-                userToken = userName;
-                dispatch({type : 'LOGIN_ADMIN', id : userName, token : userToken});
+            if(user.AdministratorStatus == 1 ){
+                userToken = user.Username;
+                dispatch({type: 'LOGIN', id: user.Username , token : userToken});
+            }else if(user.AdministratorStatus == 2){
+                userToken = user.Username;
+                dispatch({type : 'LOGIN_ADMIN', id : user.Username, token : userToken});
             }
 
         },
@@ -559,7 +559,7 @@ if(loginState.isLoading){
             <ActivityIndicator size ="large"/>
         </View>
     );
-}
+};
 
 
 return(

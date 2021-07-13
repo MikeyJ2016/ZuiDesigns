@@ -19,6 +19,9 @@ import {AuthContext } from '../Components/context.js';
 
 const ChangePasswordScreen = ({navigation}) => {
 
+
+        const {getUser,updateUsername} = React.useContext(AuthContext);
+
         const [data,setData] = React.useState({
         username: '',
         password : '',
@@ -30,20 +33,36 @@ const ChangePasswordScreen = ({navigation}) => {
         confirm_secureTextEntry : true
         });
 
+
+        const handleUpdate= async() => {
+            let user = getUser();
+             let pass = await fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=verifyUsername&username=' + `${user}`);
+             let verify = await pass.json();
+            if(verify.users[0].Password === data.password){
+                if(data._newPassword == data.confirm_password ){
+                    let response = await fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=updatePassword&username=' + `${getUser()}` + '&newPassword=' + `${data._newPassword}`);
+                    let res = await response.json();
+                    if(Object.keys(res.users[0]).length !== 0){
+                            navigation.goBack();
+                    }
+                }
+            }
+        }
+
         const handlePasswordChange = (val) => {
-                if( val.trim().length >= 8 ) {
                     setData({
                         ...data,
                         password: val,
                         isValidPassword: true
                     });
-                } else {
-                    setData({
-                        ...data,
-                        password: val,
-                        isValidPassword: false
-                    });
-                }
+//                } else {
+//                    setData({
+//                        ...data,
+//                        password: val,
+//                        isValidPassword: false
+//                    });
+//                }
+
             }
 
         const handleNewPasswordChange = (val) => {
@@ -115,7 +134,7 @@ const ChangePasswordScreen = ({navigation}) => {
                     placeholderTextColor = "white"
                     secureTextEntry = {data._newSecureTextEntry ? true: false}
                     style={styles.textInput}
-                    onChangeText ={(val) => handleNewPasswordChange(val)}
+                    onChangeText ={(val) => handlePasswordChange(val)}
                     color = "white"
                 />
                 <TouchableOpacity
@@ -151,7 +170,7 @@ const ChangePasswordScreen = ({navigation}) => {
                 placeholderTextColor = "white"
                 secureTextEntry = {data.secureTextEntry ? true: false}
                 style={styles.textInput}
-                onChangeText ={(val) => handlePasswordChange(val)}
+                onChangeText ={(val) => handleNewPasswordChange(val)}
                 color = "white"
             />
             <TouchableOpacity
@@ -214,7 +233,7 @@ const ChangePasswordScreen = ({navigation}) => {
                 <View style={styles.section}>
                     <TouchableOpacity
                         style = {[styles.signIn ]}
-                        onPress= {() => navigation.goBack()}>
+                        onPress= {() => handleUpdate()}>
                         <LinearGradient
                             colors ={['#08d4c4','#01ab9d']}
                             style={styles.signIn}
