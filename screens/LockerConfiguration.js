@@ -2,20 +2,42 @@ import React from 'react';
 import {View, Text,Button,StyleSheet,FlatList, Statusbar,ScrollView,TouchableOpacity } from 'react-native'
 import {useTheme } from '@react-naviagtion/native';
 import LinearGradient from 'react-native-linear-gradient';
-import  {useState} from 'react';
+import  {useState,useEffect } from 'react';
 import Feather from 'react-native-vector-icons/Feather';
 import {AuthContext } from '../Components/context.js';
 
 const LockerConfiguration = ({navigation}) => {
 
+    const [data, setData] = React.useState([]);
+
+
+    useEffect(async() =>{
+         await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?')
+           .then(response => response.json())
+           .then(res => setData(res.users))
+           .catch((error) => console.error(error));
+   }, []);
+
     const {getOwned,release} = React.useContext(AuthContext);
     let locker = getOwned();
-    let message;
+    let message,analog,digital,lockStatus;
     if(locker == null) {
         message = "None";
+        analog = "0.0";
+        digital = "0.0";
+        lockStatus = "Lock";
     }else{
-        message = "Locker " + `${locker.id}`;
+        message = "Locker " + `${locker.NodeNumber}`;
+        analog = `${locker.AnalogVoltage}`;
+        digital = `${locker.DigitalStatus}`;
+        if(locker.RelayStatus == 0){
+            lockStatus = "Lock";
+        }else{
+            lockStatus = "Unlock";
+        }
+
     }
+
 
     return (
     <View style={[styles.container, {marginTop : 30, paddingHorizontal : 50}]}>
@@ -36,7 +58,7 @@ const LockerConfiguration = ({navigation}) => {
             >
                 <Text style ={[styles.textSign,{
                     color:'#fff'
-                }]}>Lock/UnLock</Text>
+                }]}>{lockStatus}</Text>
             </LinearGradient>
         </TouchableOpacity>
         <TouchableOpacity
@@ -85,7 +107,7 @@ const LockerConfiguration = ({navigation}) => {
             >
                 <Text style ={[styles.textSign,{
                     color:'#000'
-                }]}>0.0</Text>
+                }]}>{digital}</Text>
             </LinearGradient>
 
             <LinearGradient
@@ -94,7 +116,7 @@ const LockerConfiguration = ({navigation}) => {
             >
                 <Text style ={[styles.textSign,{
                     color:'#000'
-                }]}>0.0</Text>
+                }]}>{analog}</Text>
             </LinearGradient>
     </View>
 

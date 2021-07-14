@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Text,Button,StyleSheet,FlatList, Statusbar,ScrollView,TouchableOpacity } from 'react-native'
 import {useTheme } from '@react-naviagtion/native';
 import LinearGradient from 'react-native-linear-gradient';
-import  {useState} from 'react';
+import  {useState,useEffect} from 'react';
 import Feather from 'react-native-vector-icons/Feather';
 import {AuthContext } from '../Components/context.js';
 
@@ -10,68 +10,31 @@ const AdminLockerSelectionScreen = ({navigation}) => {
 
     const {updateOwn,getOwned} = React.useContext(AuthContext);
 
-  const [data, setData] = useState([
-   {
-    title :'one',
-    isSelected : false,
-    isOwned : false,
-    id : '1'
-   },
-   {
-    title :'two',
-    isSelected : false,
-    isOwned : false,
-    id : '2'
-   },
-   {
-    title :'three',
-    isSelected : false,
-    isOwned : false,
-    id : '3'
-   },
-    {
-     title :'four',
-     isSelected : false,
-     isOwned : false,
-     id : '4'
-    },
-   {
-    title :'five',
-    isSelected : false,
-    isOwned : false,
-    id : '5'
-   },
-   {
-    title :'six',
-    isSelected : false,
-    isOwned : false,
-    id : '6'
-   },
-   {
-    title :'seven',
-    isSelected : false,
-    isOwned : false,
-    id : '7'
-   },
-   {
-    title :'eight',
-    isSelected : false,
-    isOwned : false,
-    id : '8'
-   },
-  ]);
+      const [data, setData] = useState([  ]);
+      const [isLoading, setLoading] = useState(true);
+
+        useEffect(async() =>{
+             await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?')
+               .then(response => response.json())
+               .then(res => setData(res.users))
+               .catch((error) => console.error(error))
+               .finally(() => setLoading(false));
+       }, []);
+
       const pressHandler = (id) => {
         const newData = [...data];
         newData.forEach((prevData) => {
-          if(prevData.id == id){
-            prevData.isSelected = !prevData.isSelected
-          }else{
-            prevData.isSelected = false
-          }
+            if(prevData.NodeNumber == id){
+             if(prevData.isSelected === undefined ){
+                         prevData.isSelected = true;
+             }
+                   prevData.isSelected = !prevData.isSelected;
+             }else{
+               prevData.isSelected = false
+             }
         })
         setData(newData);
       };
-
         const selection = () => {
           const newData = [...data];
 
@@ -87,10 +50,9 @@ const AdminLockerSelectionScreen = ({navigation}) => {
       <Text style = {styles.text_header}> Select Any Locker</Text>
       <View style={styles.container ,{height:300,width :300 ,
          borderWidth: 5, borderColor: 'white'  }}>
-        <FlatList data = {data} keyExtractor={(item, index) => item.id} renderItem={({item}) =>
-        (item.isOwned ? null :
+        <FlatList data = {data} keyExtractor={(item, index) => item.NodeNumber} renderItem={({item}) =>
               <TouchableOpacity style = {styles.signIn}
-                onPress = {() => pressHandler(item.id)}
+                onPress = {() => pressHandler(item.NodeNumber)}
                >
                    <LinearGradient
                        colors ={['#fff','#fff']}
@@ -98,7 +60,20 @@ const AdminLockerSelectionScreen = ({navigation}) => {
                    >
                        <Text style ={[styles.textSign,{
                            color:'#000'
-                       }]}>Locker {item.title}</Text>
+                       }]}>Locker {item.NodeNumber}</Text>
+                    {item.Ownership == 0 ?
+                    <Feather
+                        name="check"
+                        color="green"
+                        size={20}
+                     />
+                     :
+                    <Feather
+                           name="x"
+                           color="red"
+                           size={20}
+                        /> }
+
                       {item.isSelected ?
                       <Feather
                           name="check-circle"
@@ -109,7 +84,7 @@ const AdminLockerSelectionScreen = ({navigation}) => {
 
                    </LinearGradient>
 
-               </TouchableOpacity>)}>
+               </TouchableOpacity>}>
         </FlatList>
       </View>
            <View style={styles.row}>

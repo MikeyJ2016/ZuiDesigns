@@ -433,6 +433,7 @@ const userURL = "https://www.zuidesigns.com/sp2021/userExample.cgi?"
                     ...prevState,
                     userName : action.id,
                     userToken:action.token,
+                    ownedNode: action.owned,
                     isLoading: false,
                 };
             case 'LOGIN_ADMIN':
@@ -494,7 +495,17 @@ const userURL = "https://www.zuidesigns.com/sp2021/userExample.cgi?"
             userToken = null;
             if(user.AdministratorStatus == 1 ){
                 userToken = user.Username;
-                dispatch({type: 'LOGIN', id: user.Username , token : userToken});
+                if(user.OwnedNode !== "(null)"){
+                  let response = await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?');
+                  let res =  await response.json();
+                  const newData = res.users.filter((item) => {
+                    return item.NodeNumber === user.OwnedNode;
+                  });
+                  dispatch({type: 'LOGIN', id: user.Username , token : userToken, owned: newData[0]});
+                }else{
+                    dispatch({type: 'LOGIN', id: user.Username , token : userToken, owned: null});
+                }
+
             }else if(user.AdministratorStatus == 2){
                 userToken = user.Username;
                 dispatch({type : 'LOGIN_ADMIN', id : user.Username, token : userToken});
@@ -534,6 +545,10 @@ const userURL = "https://www.zuidesigns.com/sp2021/userExample.cgi?"
         },
         release: () => {
             if(loginState.ownedNode !== null){
+            fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateOwnedNode&node_number=' + `${loginState.ownedNode.NodeNumber}` +'&ownership=0')
+            .catch((error) => console.error(error));
+            fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=updateOwnedNode&username=' + `${loginState.userName}` + '&ownedNode=0')
+            .catch((error) => console.error(error));
                 loginState.ownedNode.isOwned = false;
                 loginState.ownedNode.isSelected = false;
                 dispatch({type: 'RELEASE'});

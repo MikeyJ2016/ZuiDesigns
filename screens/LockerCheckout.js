@@ -8,73 +8,35 @@ import {AuthContext } from '../Components/context.js';
 
 const LockerCheckout = ({navigation}) => {
 
-    const {updateOwn,getOwned} = React.useContext(AuthContext);
+    const {updateOwn,getOwned,getUser} = React.useContext(AuthContext);
     const [data, setData] = React.useState([]);
     const [isLoading, setLoading] = useState(true);
 
+    const fetchData = async() => {
+      await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?')
+        .then(response => response.json())
+        .then(res => setData(res.users))
+        .catch((error) => console.error(error))
+        .finally(() => setLoading(false));
+    }
+
      useEffect(() =>{
-          fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?')
-            .then(response => response.json())
-            .then(res => setData(res.users))
-            .catch((error) => console.error(error))
-            .finally(() => setLoading(false));
+          fetchData();
+          const willFocusSubscription = navigation.addListener('focus', () => {
+            fetchData();
+        });
+
+        return willFocusSubscription;
     }, []);
 
-//  const [data, setData] = useState([
-//   {
-//    title :'one',
-//    isSelected : false,
-//    isOwned : false,
-//    id : '1'
-//   },
-//   {
-//    title :'two',
-//    isSelected : false,
-//    isOwned : false,
-//    id : '2'
-//   },
-//   {
-//    title :'three',
-//    isSelected : false,
-//    isOwned : false,
-//    id : '3'
-//   },
-//    {
-//     title :'four',
-//     isSelected : false,
-//     isOwned : false,
-//     id : '4'
-//    },
-//   {
-//    title :'five',
-//    isSelected : false,
-//    isOwned : false,
-//    id : '5'
-//   },
-//   {
-//    title :'six',
-//    isSelected : false,
-//    isOwned : false,
-//    id : '6'
-//   },
-//   {
-//    title :'seven',
-//    isSelected : false,
-//    isOwned : false,
-//    id : '7'
-//   },
-//   {
-//    title :'eight',
-//    isSelected : false,
-//    isOwned : false,
-//    id : '8'
-//   },
-//  ]);
       const pressHandler = (id) => {
         const newData = [...data];
         newData.forEach((prevData) => {
-          if(prevData.id == id){
-            prevData.isSelected = !prevData.isSelected
+          if(prevData.NodeNumber == id){
+          if(prevData.isSelected === undefined ){
+                      prevData.isSelected = true;
+          }
+                prevData.isSelected = !prevData.isSelected;
           }else{
             prevData.isSelected = false
           }
@@ -83,32 +45,38 @@ const LockerCheckout = ({navigation}) => {
         setData(newData);
       };
 
-        const selection = () => {
+        const selection = async() => {
+
           const newData = [...data];
           let temp = getOwned();
 
           newData.forEach((data) => {
               if(getOwned() == null){
-                  if(data.isSelected && !data.isOwned){
-                    data.isOwned = true;
+                  if(data.isSelected && data.Ownership == 0){
+                    data.Ownership = 1;
                     updateOwn(data);
+                    fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateOwnedNode&node_number=' + `${data.NodeNumber}` +'&ownership=1')
+                    .catch((error) => console.error(error));
+                    fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=updateOwnedNode&username=' + `${getUser()}` + '&ownedNode=' +`${data.NodeNumber}`)
+                    .catch((error) => console.error(error));
                     navigation.navigate('User Home Page');
                   }
               }else{
-                alert("You already own Locker " + `${temp.id}`);
+                alert("You already own Locker " + `${temp.NodeNumber}`);
               }
           })
         };
+
 
     return (
     <View style={styles.container}>
       <Text style = {styles.text_header}> Select Any Locker</Text>
       <View style={styles.container ,{height:300,width :300 ,
          borderWidth: 5, borderColor: 'white'  }}>
-        <FlatList data = {data} keyExtractor={(item, index) => item.id} renderItem={({item}) =>
-        (false ? null :
+        <FlatList data = {data} keyExtractor={(item, index) => item.NodeNumber} renderItem={({item}) =>
+        (item.Ownership == 1 ? null :
               <TouchableOpacity style = {styles.signIn}
-                onPress = {() => pressHandler(item.id)}
+                onPress = {() => pressHandler(item.NodeNumber)}
                >
                    <LinearGradient
                        colors ={['#fff','#fff']}
@@ -116,8 +84,8 @@ const LockerCheckout = ({navigation}) => {
                    >
                        <Text style ={[styles.textSign,{
                            color:'#000'
-                       }]}>Locker {item.Username}</Text>
-                      {false ?
+                       }]}>Locker {item.NodeNumber}</Text>
+                      {item.isSelected ?
 
                       <Feather
                           name="check-circle"
