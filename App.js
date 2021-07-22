@@ -527,9 +527,16 @@ const userURL = "https://www.zuidesigns.com/sp2021/userExample.cgi?"
             user = userName;
             dispatch({type : 'UPDATE_USER', id : userName, token : user});
         },
-        getUser: () => {
-            return (
+        getUser:   () => {
+        return (
                 loginState.userToken
+            );
+        },
+        checkUser : async() => {
+            let response = await fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=verifyUsername&username=' + `${loginState.userName}`);
+            let res = await response.json();
+            return (
+                res.users[0].Username
             );
         },
         updateOwn: (ownedNode) => {

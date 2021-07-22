@@ -10,6 +10,7 @@ const LockerCheckout = ({navigation}) => {
 
     const {updateOwn,getOwned,getUser} = React.useContext(AuthContext);
     const [data, setData] = React.useState([]);
+    const [alert, setAlert] = React.useState(false);
     const [isLoading, setLoading] = useState(true);
 
     const fetchData = async() => {
@@ -55,14 +56,14 @@ const LockerCheckout = ({navigation}) => {
                   if(data.isSelected && data.Ownership == 0){
                     data.Ownership = 1;
                     updateOwn(data);
-                    fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateOwnedNode&node_number=' + `${data.NodeNumber}` +'&ownership=1')
+                    fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateOwnedNode&node_number=' + `${data.NodeNumber}` +'&ownership=' + `${getUser()}`)
                     .catch((error) => console.error(error));
                     fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=updateOwnedNode&username=' + `${getUser()}` + '&ownedNode=' +`${data.NodeNumber}`)
                     .catch((error) => console.error(error));
                     navigation.navigate('User Home Page');
                   }
               }else{
-                alert("You already own Locker " + `${temp.NodeNumber}`);
+                setAlert(true);
               }
           })
         };
@@ -74,7 +75,7 @@ const LockerCheckout = ({navigation}) => {
       <View style={styles.container ,{height:300,width :300 ,
          borderWidth: 5, borderColor: 'white'  }}>
         <FlatList data = {data} keyExtractor={(item, index) => item.NodeNumber} renderItem={({item}) =>
-        (item.Ownership == 1 ? null :
+        (item.Ownership !== "0" ? null :
               <TouchableOpacity style = {styles.signIn}
                 onPress = {() => pressHandler(item.NodeNumber)}
                >
@@ -99,6 +100,9 @@ const LockerCheckout = ({navigation}) => {
                </TouchableOpacity>)}>
         </FlatList>
       </View>
+        {!alert ? null :
+        <Text style = {{color: 'red'}}> You already own Locker {getOwned().NodeNumber} </Text>
+        }
            <View style={styles.row}>
                     <TouchableOpacity
                         style = {[styles.side_by_side ]}

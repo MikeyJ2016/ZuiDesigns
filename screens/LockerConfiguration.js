@@ -8,18 +8,61 @@ import {AuthContext } from '../Components/context.js';
 
 const LockerConfiguration = ({navigation}) => {
 
-    const [data, setData] = React.useState([]);
+    const {getUser,getOwned,release} = React.useContext(AuthContext);
+    const [data, setData] = React.useState({
+        NodeNumber: "",
+        RelayStatus : 0,
+        DigitalStatus : "",
+        AnalogVoltage : "",
+        Ownership : ""
+    });
+    const [user, setUser] = React.useState({Username : ""});
+    let temp = getUser();
+
+    const fetchData = async() => {
+       let response  = await fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=verifyUsername&username=' + `${temp}`);
+        let res = await response.json();
+        res = res.users[0]
+        if(res.OwnedNode !== "(null)"){
+            response = await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=verifyNode&node_number=' + `${res.OwnedNode}`);
+            res = await response.json();
+            setData({
+                ...data,
+                    NodeNumber: res.nodes[0].NodeNumber,
+                    RelayStatus : res.nodes[0].RelayStatus,
+                    DigitalStatus : res.nodes[0].DigitalStatus,
+                    AnalogVoltage : res.nodes[0].AnalogVoltage,
+                    Ownership : res.nodes[0].Ownership,
+            })
+        }else{
+            setData({
+                ...data,
+                NodeNumber: "",
+                RelayStatus : 0,
+                DigitalStatus : "",
+                AnalogVoltage : "",
+                Ownership : ""
+            })
+        }
+    }
 
 
-    useEffect(async() =>{
-         await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?')
-           .then(response => response.json())
-           .then(res => setData(res.users))
-           .catch((error) => console.error(error));
-   }, []);
+    useEffect(() =>{
+         setUser({
+         ...user,
+         Username : temp
+         })
 
-    const {getOwned,release} = React.useContext(AuthContext);
+        const interval = setInterval(() => {
+        t = t + 1;
+        fetchData();
+        }, 1000);
+        return () => clearInterval(interval);
+   }, [t,temp]);
+
+
     let locker = getOwned();
+    let t = 0;
     let message,analog,digital,lockStatus;
     if(locker == null) {
         message = "None";
@@ -30,12 +73,33 @@ const LockerConfiguration = ({navigation}) => {
         message = "Locker " + `${locker.NodeNumber}`;
         analog = `${locker.AnalogVoltage}`;
         digital = `${locker.DigitalStatus}`;
-        if(locker.RelayStatus == 0){
+        if(data.RelayStatus == 0){
             lockStatus = "Lock";
         }else{
             lockStatus = "Unlock";
         }
 
+    }
+
+    const LockLocker = async() => {
+        let response, res;
+        if(data.NodeNumber !== ""){
+            if(data.RelayStatus == 1){
+                    response = await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateLockerStatus&node_number=' + `${data.NodeNumber}` + '&relay_status=0');
+            }else{
+                    response = await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateLockerStatus&node_number=' + `${data.NodeNumber}` + '&relay_status=1');
+            }
+            let res = await response.json();
+            res = res.users[0];
+            setData({
+                ...data,
+                    NodeNumber: res.NodeNumber,
+                    RelayStatus : res.RelayStatus,
+                    DigitalStatus : res.DigitalStatus,
+                    AnalogVoltage : res.AnalogVoltage,
+                    Ownership : res.Ownership,
+            })
+        }
     }
 
 
@@ -51,6 +115,7 @@ const LockerConfiguration = ({navigation}) => {
       </LinearGradient>
         <TouchableOpacity
             style = {[styles.signIn,{marginTop : 50},{paddingHorizontal :75}]}
+            onPress={() => LockLocker()}
         >
             <LinearGradient
                 colors ={['#08d4c4','#01ab9d']}
@@ -107,7 +172,7 @@ const LockerConfiguration = ({navigation}) => {
             >
                 <Text style ={[styles.textSign,{
                     color:'#000'
-                }]}>{digital}</Text>
+                }]}>{data.DigitalStatus}</Text>
             </LinearGradient>
 
             <LinearGradient
@@ -116,7 +181,7 @@ const LockerConfiguration = ({navigation}) => {
             >
                 <Text style ={[styles.textSign,{
                     color:'#000'
-                }]}>{analog}</Text>
+                }]}>{data.AnalogVoltage}</Text>
             </LinearGradient>
     </View>
 
@@ -131,6 +196,7 @@ const LockerConfiguration = ({navigation}) => {
      }}>
         <TouchableOpacity
             style = {[styles.side_by_side ]}
+
          >
             <LinearGradient
                 colors ={['#6E6969','#6E6969']}

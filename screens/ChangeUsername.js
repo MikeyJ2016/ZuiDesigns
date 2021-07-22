@@ -20,10 +20,10 @@ import {AuthContext } from '../Components/context.js';
 const ChangeUsernameScreen = ({navigation}) => {
 
         const {getUser,updateUsername} = React.useContext(AuthContext);
-
+        let user = getUser()
 
         const handleUpdate= async() => {
-            if(data.username == getUser() && data.check_newInputChange){
+            if(data.username == user && data.check_newInputChange){
                  let response = await fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=updateUsername&username=' + `${data.username}` + '&newUsername=' + `${data._newUserName}`);
                  let res = await response.json();
                 updateUsername(data._newUserName);
