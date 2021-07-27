@@ -2,19 +2,96 @@ import React from 'react';
 import {View, Text,Button,StyleSheet,FlatList, Statusbar,ScrollView,TouchableOpacity } from 'react-native'
 import {useTheme } from '@react-naviagtion/native';
 import LinearGradient from 'react-native-linear-gradient';
-import  {useState} from 'react';
+import  {useState,useEffect,useContext} from 'react';
 import Feather from 'react-native-vector-icons/Feather';
 import {AuthContext } from '../Components/context.js';
 
 const AdminConfigureScreen = ({route, navigation}) => {
 
-    let locker = null;
-    let message;
-    if(locker == null) {
+    const [node , setNode] = React.useState({NodeNumber : "" , Ownership : "",DigitalStatus : 0, AnalogVoltage : 0, RelayStatus : 0})
+    let t = 0;
+    let checkLocker = 0;
+    const {authContext} = React.useContext(AuthContext);
+    const {userInfo} = React.useContext(AuthContext);
+
+    let message,owner;
+    if(false) {
         message = "None";
     }else{
-        message = "Locker " + `${locker.id}`;
+        message = " ";
     }
+
+    const fetchData = async(ID) => {
+
+    if(ID !== null){
+
+      await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=verifyNode&node_number=' + `${ID}`)
+        .then(response => response.json())
+        .then(res => setNode({
+            ...node,
+            NodeNumber : res.nodes[0].NodeNumber,
+            DigitalStatus : res.nodes[0].DigitalStatus,
+            RelayStatus : res.nodes[0].RelayStatus,
+            AnalogVoltage : res.nodes[0].AnalogVoltage,
+            Ownership : res.nodes[0].Ownership
+       }))
+        .catch((error) => console.error(error));
+        }
+    }
+
+
+
+     useEffect(() =>{
+        const interval = setInterval(() => {
+        let locker = userInfo;
+        alert(`${userInfo.NodeNumber}`);
+        if(locker !== null){
+        t = t + 1;
+        fetchData(userInfo.NodeNumber);
+        }
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [t]);
+
+
+    const LockLocker = async() => {
+        let response, res;
+
+        if(node.NodeNumber !== null){
+            if(node.RelayStatus == 1){
+                    response = await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateLockerStatus&node_number=' + `${node.NodeNumber}` + '&relay_status=0');
+            }else if (node.RelayStatus == 0){
+                    response = await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateLockerStatus&node_number=' + `${node.NodeNumber}` + '&relay_status=1');
+            }
+            res = await response.json();
+            res = res.users[0];
+            setNode({
+                ...node,
+                    RelayStatus : res.RelayStatus,
+                    DigitalStatus : res.DigitalStatus,
+                    AnalogVoltage : res.AnalogVoltage,
+                    Ownership : res.Ownership
+            });
+        }else{
+            setNode({
+                ...node,
+                RelayStatus : 0,
+                DigitalStatus : "",
+                AnalogVoltage : "",
+                Ownership : ""
+            })
+        }
+    }
+
+
+    const updateOwner = () => {
+        AdminRemoveOwner();
+        setNode({
+            ...node,
+            Ownership : 0
+        })
+    }
+
 
     return (
     <View style={[styles.container, {marginTop : 30, paddingHorizontal : 50}]}>
@@ -24,29 +101,38 @@ const AdminConfigureScreen = ({route, navigation}) => {
       >
         <Text style ={[styles.textSign,{
           color:'#fff'
-        }]}> Selected : {message} </Text>
+        }]}> Selected : Locker {userInfo.NodeNumber} </Text>
         <Text style ={[styles.textSign,{
                   color:'#fff'
-                }]}> Owner : {message} </Text>
+                }]}> Owner : {node.Ownership} </Text>
         </LinearGradient>
 
      <View style={styles.row}>
             <TouchableOpacity
                         style = {[styles.side_by_side ]}
+                        onPress={() => LockLocker()}
                      >
                         <LinearGradient
                             colors ={['#08d4c4','#01ab9d']}
                             style={styles.side_by_side}
                         >
+                          {node.RelayStatus == 1 ?
                             <Text style ={[styles.textSign,{
                                 color:'#fff'
-                            }]}>Lock/UnLock</Text>
+                            }]}>Unlock</Text>
+
+                            :
+                            <Text style ={[styles.textSign,{
+                                color:'#fff'
+                            }]}>Lock</Text>
+                            }
                         </LinearGradient>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                           style = {[styles.side_by_side ]}
-                            >
+                       style = {[styles.side_by_side ]}
+                       onPress = {() =>  updateOwner() }
+                    >
                              <LinearGradient
                              colors ={['#08d4c4','#01ab9d']}
                              style={styles.side_by_side}
@@ -60,8 +146,9 @@ const AdminConfigureScreen = ({route, navigation}) => {
 
         <View style={styles.row}>
                     <TouchableOpacity
-                                style = {[styles.side_by_side ]}
-                             >
+                            style = {[styles.side_by_side ]}
+                            onPress={() => authContext.changeInfo_2()}
+                     >
                                 <LinearGradient
                                     colors ={['#08d4c4','#01ab9d']}
                                     style={styles.side_by_side}
@@ -74,7 +161,8 @@ const AdminConfigureScreen = ({route, navigation}) => {
 
                             <TouchableOpacity
                                    style = {[styles.side_by_side ]}
-                                    >
+                                onPress={() => authContext.changeInfo_1()}
+                            >
                                      <LinearGradient
                                      colors ={['#08d4c4','#01ab9d']}
                                      style={styles.side_by_side}
@@ -121,7 +209,7 @@ const AdminConfigureScreen = ({route, navigation}) => {
             >
                 <Text style ={[styles.textSign,{
                     color:'#000'
-                }]}>0.0</Text>
+                }]}>{node.DigitalStatus}</Text>
             </LinearGradient>
 
             <LinearGradient
@@ -130,7 +218,7 @@ const AdminConfigureScreen = ({route, navigation}) => {
             >
                 <Text style ={[styles.textSign,{
                     color:'#000'
-                }]}>0.0</Text>
+                }]}>{node.AnalogVoltage}</Text>
             </LinearGradient>
     </View>
 
@@ -159,7 +247,11 @@ const AdminConfigureScreen = ({route, navigation}) => {
 
         <TouchableOpacity
             style = {[styles.side_by_side ]}
-            onPress= {() => navigation.navigate('Admin Home Page')}>
+            onPress= {() => {
+            authContext.adminRelease();
+            navigation.navigate('Admin Locker Selection');
+            }}>
+
             <LinearGradient
                 colors ={['#08d4c4','#01ab9d']}
                 style={styles.side_by_side}

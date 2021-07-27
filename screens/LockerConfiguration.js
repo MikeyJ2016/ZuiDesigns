@@ -8,7 +8,7 @@ import {AuthContext } from '../Components/context.js';
 
 const LockerConfiguration = ({navigation}) => {
 
-    const {getUser,getOwned,release} = React.useContext(AuthContext);
+    const {authContext} = React.useContext(AuthContext);
     const [data, setData] = React.useState({
         NodeNumber: "",
         RelayStatus : 0,
@@ -17,12 +17,12 @@ const LockerConfiguration = ({navigation}) => {
         Ownership : ""
     });
     const [user, setUser] = React.useState({Username : ""});
-    let temp = getUser();
+    let temp = authContext.getUser();
 
     const fetchData = async() => {
        let response  = await fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=verifyUsername&username=' + `${temp}`);
         let res = await response.json();
-        res = res.users[0]
+        res = res.users[0];
         if(res.OwnedNode !== "(null)"){
             response = await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=verifyNode&node_number=' + `${res.OwnedNode}`);
             res = await response.json();
@@ -34,6 +34,15 @@ const LockerConfiguration = ({navigation}) => {
                     AnalogVoltage : res.nodes[0].AnalogVoltage,
                     Ownership : res.nodes[0].Ownership,
             })
+            if(res.nodes[0].RelayStatus == 1){
+                if(checkLocker >= 20){
+                    LockLocker();
+                }else{
+                    checkLocker = checkLocker + 1;
+                }
+            }else{
+                checkLocker = 0;
+            }
         }else{
             setData({
                 ...data,
@@ -53,6 +62,8 @@ const LockerConfiguration = ({navigation}) => {
          Username : temp
          })
 
+
+
         const interval = setInterval(() => {
         t = t + 1;
         fetchData();
@@ -61,8 +72,9 @@ const LockerConfiguration = ({navigation}) => {
    }, [t,temp]);
 
 
-    let locker = getOwned();
+    let locker = authContext.getOwned();
     let t = 0;
+    let checkLocker = 0;
     let message,analog,digital,lockStatus;
     if(locker == null) {
         message = "None";
@@ -83,7 +95,7 @@ const LockerConfiguration = ({navigation}) => {
 
     const LockLocker = async() => {
         let response, res;
-        if(data.NodeNumber !== ""){
+        if(locker !== null){
             if(data.RelayStatus == 1){
                     response = await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateLockerStatus&node_number=' + `${data.NodeNumber}` + '&relay_status=0');
             }else{
@@ -98,6 +110,15 @@ const LockerConfiguration = ({navigation}) => {
                     DigitalStatus : res.DigitalStatus,
                     AnalogVoltage : res.AnalogVoltage,
                     Ownership : res.Ownership,
+            })
+        }else{
+            setData({
+                ...data,
+                NodeNumber: "",
+                RelayStatus : 0,
+                DigitalStatus : "",
+                AnalogVoltage : "",
+                Ownership : ""
             })
         }
     }
@@ -121,6 +142,7 @@ const LockerConfiguration = ({navigation}) => {
                 colors ={['#08d4c4','#01ab9d']}
                 style={styles.side_by_side}
             >
+
                 <Text style ={[styles.textSign,{
                     color:'#fff'
                 }]}>{lockStatus}</Text>
@@ -128,7 +150,7 @@ const LockerConfiguration = ({navigation}) => {
         </TouchableOpacity>
         <TouchableOpacity
             style = {[styles.signIn,{marginTop : 50},{paddingHorizontal :75}]}
-            onPress={() => release()}
+            onPress={() => authContext.release()}
         >
             <LinearGradient
                 colors ={['#08d4c4','#01ab9d']}
@@ -145,7 +167,7 @@ const LockerConfiguration = ({navigation}) => {
             color:'#fff',
             paddingHorizontal : 20,
             textAlign: 'center',
-        }]}>Digital Output Voltage</Text>
+        }]}>Digital Input Voltage</Text>
 
         <Text style ={[styles.textSign,{
             color:'#fff',

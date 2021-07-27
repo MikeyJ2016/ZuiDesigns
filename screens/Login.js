@@ -8,8 +8,11 @@ import {
     Platform,
     StyleSheet ,
     StatusBar,
-    Alert
+    Alert,
+    Image
 } from 'react-native';
+
+
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -44,7 +47,7 @@ const Login = ({navigation}) => {
          }
     }
 
-    const {signIn} = React.useContext(AuthContext);
+    const {authContext} = React.useContext(AuthContext);
 
     const textInputChange=(val) => {
         if(val.trim().length >= 4) {
@@ -93,7 +96,7 @@ const Login = ({navigation}) => {
                         ...data,
                         validentry : true
                     });
-                    signIn(user);
+                    authContext.signIn(user);
                 }else{
                     setData({
                         ...data,
@@ -104,8 +107,15 @@ const Login = ({navigation}) => {
         }
 return (
 < View style = {styles.container} >
+
     <View style = {styles.header}>
-        <Text style = {styles.text_header}> Welcome! ZuiDesigns Senior Project Login</Text>
+        <Image
+            source={{
+              uri: 'https://media.discordapp.net/attachments/811004485068521472/868999399206973520/logo.png'
+            }}
+            style={{width : 200,height:150}}
+         />
+        <Text style = {styles.text_header}> Mesh Network Concept</Text>
     </View>
     <View style = {styles.footer}>
         <Text style = {styles.text_footer}> Username</Text>
@@ -214,13 +224,15 @@ export default Login;
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#0E2742'
+      backgroundColor: '#182E46',
+
     },
     header: {
         flex: 1,
         justifyContent: 'flex-end',
         paddingHorizontal: 20,
-        paddingBottom: 50
+        paddingTop: 50,
+                      alignItems: 'center',
     },
     footer: {
         flex: 3,
@@ -228,7 +240,7 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
         paddingHorizontal: 20,
-        paddingVertical: 30
+        paddingVertical:30
     },
     text_header: {
         color: '#fff',

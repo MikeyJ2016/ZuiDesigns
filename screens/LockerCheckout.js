@@ -8,7 +8,7 @@ import {AuthContext } from '../Components/context.js';
 
 const LockerCheckout = ({navigation}) => {
 
-    const {updateOwn,getOwned,getUser} = React.useContext(AuthContext);
+    const {authContext} = React.useContext(AuthContext);
     const [data, setData] = React.useState([]);
     const [alert, setAlert] = React.useState(false);
     const [isLoading, setLoading] = useState(true);
@@ -34,9 +34,9 @@ const LockerCheckout = ({navigation}) => {
         const newData = [...data];
         newData.forEach((prevData) => {
           if(prevData.NodeNumber == id){
-          if(prevData.isSelected === undefined ){
-                      prevData.isSelected = true;
-          }
+              if(prevData.isSelected === undefined ){
+                          prevData.isSelected = true;
+              }
                 prevData.isSelected = !prevData.isSelected;
           }else{
             prevData.isSelected = false
@@ -49,17 +49,18 @@ const LockerCheckout = ({navigation}) => {
         const selection = async() => {
 
           const newData = [...data];
-          let temp = getOwned();
+          let temp = authContext.getOwned();
 
           newData.forEach((data) => {
-              if(getOwned() == null){
+              if(authContext.getOwned() == null){
                   if(data.isSelected && data.Ownership == 0){
                     data.Ownership = 1;
-                    updateOwn(data);
-                    fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateOwnedNode&node_number=' + `${data.NodeNumber}` +'&ownership=' + `${getUser()}`)
+                    authContext.updateOwn(data);
+                    fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateOwnedNode&node_number=' + `${data.NodeNumber}` +'&ownership=' + `${authContext.getUser()}`)
                     .catch((error) => console.error(error));
-                    fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=updateOwnedNode&username=' + `${getUser()}` + '&ownedNode=' +`${data.NodeNumber}`)
+                    fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=updateOwnedNode&username=' + `${authContext.getUser()}` + '&ownedNode=' +`${data.NodeNumber}`)
                     .catch((error) => console.error(error));
+                    setAlert(false);
                     navigation.navigate('User Home Page');
                   }
               }else{
@@ -101,12 +102,14 @@ const LockerCheckout = ({navigation}) => {
         </FlatList>
       </View>
         {!alert ? null :
-        <Text style = {{color: 'red'}}> You already own Locker {getOwned().NodeNumber} </Text>
+        <Text style = {{color: 'red'}}> You already own Locker {authContext.getOwned().NodeNumber} </Text>
         }
            <View style={styles.row}>
                     <TouchableOpacity
                         style = {[styles.side_by_side ]}
-                        onPress= {() => selection()}>
+                        onPress= {() => {
+
+                        selection()}}>
                         <LinearGradient
                             colors ={['#6E6969','#6E6969']}
                             style={styles.side_by_side}
@@ -119,7 +122,10 @@ const LockerCheckout = ({navigation}) => {
 
                     <TouchableOpacity
                         style = {[styles.side_by_side ]}
-                        onPress= {() => navigation.navigate('User Home Page')}>
+                        onPress= {() => {
+                        setAlert(false);
+                        navigation.navigate('User Home Page')}
+                        }>
                         <LinearGradient
                             colors ={['#08d4c4','#01ab9d']}
                             style={styles.side_by_side}

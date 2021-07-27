@@ -26,9 +26,9 @@ import{ AuthContext } from '../Components/context';
 export function AdminDrawer(props) {
 
 const {signOut} = React.useContext(AuthContext);
-const {getUser} = React.useContext(AuthContext);
+const {authContext} = React.useContext(AuthContext);
 
-let userName = `${getUser()}`;
+//let userName = `${getUser()}`;
 
     const [isDarkTheme, setIsDarkTheme] = React.useState(false);
 
@@ -45,13 +45,13 @@ return(
                     <View style={{flexDirection : 'row', marginTop : 15}}>
                         <Avatar.Image
                             source={{
-                                uri: 'https://www.gvsu.edu/cms4/asset/83FCF959-CAC9-6F16-437BAC0D302BE992/zuidesign[1595357085].jpg'
+                                uri: 'https://media.discordapp.net/attachments/811004485068521472/868999399206973520/logo.png'
                             }}
                             size = {50}
                          />
                          <View>
                             <Title>
-                               {getUser()}
+                               {authContext.getUser()}
                             </Title>
                             <Caption>
 
@@ -118,7 +118,7 @@ return(
                      />
                 )}
                 label = "Sign Out"
-                onPress={() => {signOut()}}
+                onPress={() => {authContext.signOut()}}
             />
         </Drawer.Section >
    </View>

@@ -28,6 +28,7 @@ import {
   useColorScheme,
   View,
   Button,
+  Image,
   ActivityIndicator,
 } from 'react-native';
 
@@ -153,7 +154,8 @@ return(
 
                     <Icon.Button name="ios-menu" size = {25} backgroundColor='#0E2742'
                     onPress = {() => {navigation.openDrawer()}}> </Icon.Button>
-                    )
+                    ),
+
                 }}
                 />
 
@@ -405,7 +407,7 @@ return(
      </LCStack.Navigator>
      );
 }
-const App: () => Node = () => {
+const App:   () => Node = () => {
 //
 //const [isLoading,setIsLoading] = React.useState(true);
 //const[userToken, setUserToken] = React.useState(null);
@@ -417,7 +419,16 @@ const userURL = "https://www.zuidesigns.com/sp2021/userExample.cgi?"
         userToken: null,
         ownedNode : null,
         isAdmin : false,
-    };
+    }
+
+    const [userInfo, SetInfo] = React.useState(
+    {
+    Username : "Michael",
+    Password : "Scott",
+    NodeNumber : "1"
+    }
+    )
+
 
 
     const loginReducer = (prevState,action) => {
@@ -456,6 +467,7 @@ const userURL = "https://www.zuidesigns.com/sp2021/userExample.cgi?"
                     ...prevState,
                     userName : null,
                     userToken : null,
+                    ownedNode : null,
                     isAdmin : false,
                     isLoading: false,
                 };
@@ -473,15 +485,19 @@ const userURL = "https://www.zuidesigns.com/sp2021/userExample.cgi?"
                     isLoading: false,
                 };
             case 'RELEASE':
-
-
                 return{
                     ...prevState,
                     ownedNode: null,
                     isLoading: false,
                 };
-
-
+            case 'GET_USER':
+                return {
+                    ...prevState,
+                };
+            case 'GET_OWNER':
+                return {
+                    ...prevState,
+            };
         }
     };
 
@@ -515,7 +531,9 @@ const userURL = "https://www.zuidesigns.com/sp2021/userExample.cgi?"
         signOut: () => {
 //            setUserToken(null);
 //            setIsLoading(false);
+            loginState.ownedNode = null;
             dispatch({type: 'LOGOUT'});
+
         },
         signUp: () => {
 //            setUserToken('fgkj');
@@ -525,6 +543,10 @@ const userURL = "https://www.zuidesigns.com/sp2021/userExample.cgi?"
             let user;
             user = null;
             user = userName;
+            if(loginState.ownedNode !== null){
+                            fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateOwnedNode&node_number=' + `${loginState.ownedNode.NodeNumber}` +'&ownership=' + `${userName}`)
+                            .catch((error) => console.error(error));
+            }
             dispatch({type : 'UPDATE_USER', id : userName, token : user});
         },
         getUser:   () => {
@@ -543,24 +565,64 @@ const userURL = "https://www.zuidesigns.com/sp2021/userExample.cgi?"
            let owner;
            owner = null;
            owner = ownedNode;
-           dispatch({type: 'UPDATE_OWNERSHIP', id : ownedNode});
+           loginState.ownedNode = ownedNode;
+           dispatch({type: 'UPDATE_OWNERSHIP', id : owner});
         },
         getOwned: () => {
+        if(loginState.ownedNode !== null){
             return (
                 loginState.ownedNode
             );
+        }else{
+            return null;
+        }
+        },
+        AdminRemoveOwner : async () => {
+            loginState.ownedNode.Ownership == "0";
+            await fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=updateOwnedNode&username=' + `${loginState.ownedNode.Ownership}` + '&ownedNode=0')
+            .catch((error) => console.error(error));
+            await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateOwnedNode&node_number=' + `${loginState.ownedNode.NodeNumber}` +'&ownership=0')
+            .catch((error) => console.error(error));
+
         },
         release: () => {
             if(loginState.ownedNode !== null){
             fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateOwnedNode&node_number=' + `${loginState.ownedNode.NodeNumber}` +'&ownership=0')
             .catch((error) => console.error(error));
-            fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=updateOwnedNode&username=' + `${loginState.userName}` + '&ownedNode=0')
+            fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=updateOwnedNode&username=' + `${loginState.ownedNode.Ownership}` + '&ownedNode=0')
             .catch((error) => console.error(error));
                 loginState.ownedNode.isOwned = false;
                 loginState.ownedNode.isSelected = false;
                 dispatch({type: 'RELEASE'});
             }
+        },
+        adminRelease : () => {
+                        dispatch({type: 'RELEASE'});
+                        loginState.ownedNode = null;
+        },
+        changeInfo_1 : () => {
+        let newInfo = [...userInfo];
+        newInfo = {
+                    Username : "Harley",
+                    Password : "Mitchell",
+                    NodeNumber : "2"
         }
+
+//        SetInfo(newInfo);
+
+        },
+        changeInfo_2 : () => {
+                let newInfo ;
+                newInfo = {
+                    Username : "Michael",
+                    Password : "Scott",
+                    NodeNumber : "1"
+                }
+
+                SetInfo(newInfo);
+
+        },
+
 
     }));
 
@@ -583,12 +645,10 @@ if(loginState.isLoading){
     );
 };
 
-
 return(
-<AuthContext.Provider value={authContext}>
+<AuthContext.Provider value={{userInfo,authContext}}>
     <NavigationContainer>
         {loginState.userToken !== null ? (
-
             !loginState.isAdmin ? (
             <Drawer.Navigator drawerContent={props => <DrawerContent {...props}/>}>
               <Drawer.Screen name="User Home Page" component ={HomeStackScreen}/>
@@ -618,6 +678,8 @@ return(
         }
     </NavigationContainer>
 </AuthContext.Provider>
+
+
 )};
 
 const styles = StyleSheet.create({

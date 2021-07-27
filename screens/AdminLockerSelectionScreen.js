@@ -8,18 +8,28 @@ import {AuthContext } from '../Components/context.js';
 
 const AdminLockerSelectionScreen = ({navigation}) => {
 
-    const {updateOwn,getOwned} = React.useContext(AuthContext);
+    const {authContext} = React.useContext(AuthContext);
 
       const [data, setData] = useState([  ]);
       const [isLoading, setLoading] = useState(true);
 
+
+    const fetchData = async() => {
+      await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?')
+        .then(response => response.json())
+        .then(res => setData(res.users))
+        .catch((error) => console.error(error))
+        .finally(() => setLoading(false));
+    }
+
         useEffect(async() =>{
-             await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?')
-               .then(response => response.json())
-               .then(res => setData(res.users))
-               .catch((error) => console.error(error))
-               .finally(() => setLoading(false));
-       }, []);
+          fetchData();
+          const willFocusSubscription = navigation.addListener('focus', () => {
+            fetchData();
+        });
+
+        return willFocusSubscription;
+    }, []);
 
       const pressHandler = (id) => {
         const newData = [...data];
@@ -40,6 +50,7 @@ const AdminLockerSelectionScreen = ({navigation}) => {
 
             newData.forEach((data) => {
                   if(data.isSelected ){
+                  authContext.updateOwn(data);
                     navigation.navigate('Admin Locker Configuration', {locker : data});
               }
               });

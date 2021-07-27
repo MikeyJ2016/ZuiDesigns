@@ -20,7 +20,7 @@ import {AuthContext } from '../Components/context.js';
 const ChangePasswordScreen = ({navigation}) => {
 
 
-        const {getUser,updateUsername} = React.useContext(AuthContext);
+        const {authContext} = React.useContext(AuthContext);
 
         const [data,setData] = React.useState({
         username: '',
@@ -35,12 +35,12 @@ const ChangePasswordScreen = ({navigation}) => {
 
 
         const handleUpdate= async() => {
-            let user = getUser();
+            let user = authContext.getUser();
              let pass = await fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=verifyUsername&username=' + `${user}`);
              let verify = await pass.json();
             if(verify.users[0].Password === data.password){
                 if(data._newPassword == data.confirm_password ){
-                    let response = await fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=updatePassword&username=' + `${getUser()}` + '&newPassword=' + `${data._newPassword}`);
+                    let response = await fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=updatePassword&username=' + `${authContext.getUser()}` + '&newPassword=' + `${data._newPassword}`);
                     let res = await response.json();
                     if(Object.keys(res.users[0]).length !== 0){
                             navigation.goBack();
