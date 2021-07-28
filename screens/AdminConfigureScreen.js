@@ -157,7 +157,10 @@ const AdminConfigureScreen = ({route, navigation}) => {
         <View style={styles.row}>
                     <TouchableOpacity
                             style = {[styles.side_by_side ]}
-                            onPress={() => authContext.changeInfo_2()}
+                            onPress={() => {
+                                fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateOwnedNode&node_number=' + `${node.NodeNumber}` +'&ownership=0')
+                                .catch((error) => console.error(error));
+                            }}
                      >
                                 <LinearGradient
                                     colors ={['#08d4c4','#01ab9d']}
@@ -171,7 +174,9 @@ const AdminConfigureScreen = ({route, navigation}) => {
 
                             <TouchableOpacity
                                    style = {[styles.side_by_side ]}
-                                onPress={() => authContext.changeInfo_1()}
+                                onPress={() => {
+                                       fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateOwnedNode&node_number=' + `${node.NodeNumber}` +'&ownership=UNAVAILABLE')
+                                        .catch((error) => console.error(error));}}
                             >
                                      <LinearGradient
                                      colors ={['#08d4c4','#01ab9d']}
