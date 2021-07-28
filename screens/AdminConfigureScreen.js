@@ -10,9 +10,11 @@ const AdminConfigureScreen = ({route, navigation}) => {
 
     const [node , setNode] = React.useState({NodeNumber : "" , Ownership : "",DigitalStatus : 0, AnalogVoltage : 0, RelayStatus : 0})
     let t = 0;
+
     let checkLocker = 0;
     const {authContext} = React.useContext(AuthContext);
     const {userInfo} = React.useContext(AuthContext);
+    let temp = authContext.getUser();
 
     let message,owner;
     if(false) {
@@ -21,21 +23,32 @@ const AdminConfigureScreen = ({route, navigation}) => {
         message = " ";
     }
 
-    const fetchData = async(ID) => {
+    const fetchData = async() => {
 
-    if(ID !== null){
-
-      await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=verifyNode&node_number=' + `${ID}`)
-        .then(response => response.json())
-        .then(res => setNode({
-            ...node,
-            NodeNumber : res.nodes[0].NodeNumber,
-            DigitalStatus : res.nodes[0].DigitalStatus,
-            RelayStatus : res.nodes[0].RelayStatus,
-            AnalogVoltage : res.nodes[0].AnalogVoltage,
-            Ownership : res.nodes[0].Ownership
-       }))
-        .catch((error) => console.error(error));
+        let response  = await fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=verifyUsername&username=' + `${temp}`);
+        let res = await response.json();
+        res = res.users[0];
+        if(res.OwnedNode !== "(null)"){
+            res.OwnedNode = res.OwnedNode.slice(0,res.OwnedNode.length-1);
+            response = await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=verifyNode&node_number=' + `${res.OwnedNode}`);
+            res = await response.json();
+            setNode({
+                ...node,
+                    NodeNumber: res.nodes[0].NodeNumber,
+                    RelayStatus : res.nodes[0].RelayStatus,
+                    DigitalStatus : res.nodes[0].DigitalStatus,
+                    AnalogVoltage : res.nodes[0].AnalogVoltage,
+                    Ownership : res.nodes[0].Ownership,
+            })
+        }else{
+            setNode({
+                ...node,
+                NodeNumber: "",
+                RelayStatus : 0,
+                DigitalStatus : "",
+                AnalogVoltage : "",
+                Ownership : ""
+            })
         }
     }
 
@@ -43,12 +56,11 @@ const AdminConfigureScreen = ({route, navigation}) => {
 
      useEffect(() =>{
         const interval = setInterval(() => {
-        let locker = userInfo;
-        alert(`${userInfo.NodeNumber}`);
-        if(locker !== null){
-        t = t + 1;
-        fetchData(userInfo.NodeNumber);
-        }
+            let locker = userInfo;
+            if(locker !== null){
+                t = t + 1;
+                fetchData();
+            }
         }, 1000);
         return () => clearInterval(interval);
     }, [t]);
@@ -86,10 +98,6 @@ const AdminConfigureScreen = ({route, navigation}) => {
 
     const updateOwner = () => {
         AdminRemoveOwner();
-        setNode({
-            ...node,
-            Ownership : 0
-        })
     }
 
 
@@ -101,10 +109,10 @@ const AdminConfigureScreen = ({route, navigation}) => {
       >
         <Text style ={[styles.textSign,{
           color:'#fff'
-        }]}> Selected : Locker {userInfo.NodeNumber} </Text>
+        }]}> Selected : Locker {node.NodeNumber} </Text>
         <Text style ={[styles.textSign,{
                   color:'#fff'
-                }]}> Owner : {node.Ownership} </Text>
+        }]}> Owner : {node.Ownership} </Text>
         </LinearGradient>
 
      <View style={styles.row}>
@@ -127,21 +135,23 @@ const AdminConfigureScreen = ({route, navigation}) => {
                             }]}>Lock</Text>
                             }
                         </LinearGradient>
-                    </TouchableOpacity>
+            </TouchableOpacity>
 
-                    <TouchableOpacity
-                       style = {[styles.side_by_side ]}
-                       onPress = {() =>  updateOwner() }
-                    >
-                             <LinearGradient
-                             colors ={['#08d4c4','#01ab9d']}
-                             style={styles.side_by_side}
-                              >
-                                <Text style ={[styles.textSign,{
-                              color:'#fff'
-                           }]}>Remove Owner</Text>
-                          </LinearGradient>
-                        </TouchableOpacity>
+            <TouchableOpacity
+               style = {[styles.side_by_side ]}
+               onPress = {() =>  authContext.AdminRemoveOwner(node) }
+            >
+                 <LinearGradient
+                     colors ={['#08d4c4','#01ab9d']}
+                     style={styles.side_by_side}
+                  >
+
+                    <Text style ={[styles.textSign,{
+                        color:'#fff'
+                    }]}>Remove Owner</Text>
+
+              </LinearGradient>
+            </TouchableOpacity>
         </View>
 
         <View style={styles.row}>

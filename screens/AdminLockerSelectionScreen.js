@@ -22,7 +22,7 @@ const AdminLockerSelectionScreen = ({navigation}) => {
         .finally(() => setLoading(false));
     }
 
-        useEffect(async() =>{
+    useEffect(async() =>{
           fetchData();
           const willFocusSubscription = navigation.addListener('focus', () => {
             fetchData();
@@ -45,15 +45,21 @@ const AdminLockerSelectionScreen = ({navigation}) => {
         })
         setData(newData);
       };
+
+
         const selection = () => {
           const newData = [...data];
 
-            newData.forEach((data) => {
+            newData.forEach(async(data) => {
                   if(data.isSelected ){
-                  authContext.updateOwn(data);
-                    navigation.navigate('Admin Locker Configuration', {locker : data});
-              }
-              });
+                      authContext.updateOwn(data);
+                      let uri = 'https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=updateOwnedNode&username=' + `${authContext.getUser()}` + '&ownedNode=' +`${data.NodeNumber}` + '0';
+                      let response = await fetch(uri)
+                      .catch((error) => console.error(error));
+                      let res = await response.json();
+                      navigation.navigate('Admin Locker Configuration');
+                  }
+            });
         }
 
     return (

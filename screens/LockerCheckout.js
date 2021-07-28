@@ -21,6 +21,17 @@ const LockerCheckout = ({navigation}) => {
         .finally(() => setLoading(false));
     }
 
+    let message = "";
+
+     if(alert){
+        if(authContext.getOwned() == null){
+            message = "";
+            setAlert(false);
+        }else{
+            message = `${authContext.getOwned().NodeNumber}`;
+        }
+     }
+
      useEffect(() =>{
           fetchData();
           const willFocusSubscription = navigation.addListener('focus', () => {
@@ -102,13 +113,13 @@ const LockerCheckout = ({navigation}) => {
         </FlatList>
       </View>
         {!alert ? null :
-        <Text style = {{color: 'red'}}> You already own Locker {authContext.getOwned().NodeNumber} </Text>
+        <Text style = {{color: 'red'}}> You already own Locker {message} </Text>
         }
            <View style={styles.row}>
                     <TouchableOpacity
                         style = {[styles.side_by_side ]}
                         onPress= {() => {
-
+                         setAlert(false);
                         selection()}}>
                         <LinearGradient
                             colors ={['#6E6969','#6E6969']}

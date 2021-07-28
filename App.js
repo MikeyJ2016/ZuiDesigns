@@ -544,8 +544,8 @@ const userURL = "https://www.zuidesigns.com/sp2021/userExample.cgi?"
             user = null;
             user = userName;
             if(loginState.ownedNode !== null){
-                            fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateOwnedNode&node_number=' + `${loginState.ownedNode.NodeNumber}` +'&ownership=' + `${userName}`)
-                            .catch((error) => console.error(error));
+            fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateOwnedNode&node_number=' + `${loginState.ownedNode.NodeNumber}` +'&ownership=' + `${userName}`)
+            .catch((error) => console.error(error));
             }
             dispatch({type : 'UPDATE_USER', id : userName, token : user});
         },
@@ -577,11 +577,11 @@ const userURL = "https://www.zuidesigns.com/sp2021/userExample.cgi?"
             return null;
         }
         },
-        AdminRemoveOwner : async () => {
+        AdminRemoveOwner : async (data) => {
             loginState.ownedNode.Ownership == "0";
-            await fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=updateOwnedNode&username=' + `${loginState.ownedNode.Ownership}` + '&ownedNode=0')
+            await fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=updateOwnedNode&username=' + `${data.Ownership}` + '&ownedNode=0')
             .catch((error) => console.error(error));
-            await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateOwnedNode&node_number=' + `${loginState.ownedNode.NodeNumber}` +'&ownership=0')
+            await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateOwnedNode&node_number=' + `${data.NodeNumber}` +'&ownership=0')
             .catch((error) => console.error(error));
 
         },
@@ -589,16 +589,19 @@ const userURL = "https://www.zuidesigns.com/sp2021/userExample.cgi?"
             if(loginState.ownedNode !== null){
             fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateOwnedNode&node_number=' + `${loginState.ownedNode.NodeNumber}` +'&ownership=0')
             .catch((error) => console.error(error));
-            fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=updateOwnedNode&username=' + `${loginState.ownedNode.Ownership}` + '&ownedNode=0')
+            fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=updateOwnedNode&username=' + `${loginState.userName}` + '&ownedNode=0')
             .catch((error) => console.error(error));
                 loginState.ownedNode.isOwned = false;
                 loginState.ownedNode.isSelected = false;
                 dispatch({type: 'RELEASE'});
             }
         },
-        adminRelease : () => {
-                        dispatch({type: 'RELEASE'});
-                        loginState.ownedNode = null;
+        adminRelease : async() => {
+            dispatch({type: 'RELEASE'});
+            loginState.ownedNode = null;
+            let response =  await fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=updateOwnedNode&username=' + `${loginState.userName}` + '&ownedNode=0')
+            .catch((error) => console.error(error));
+            let res = await response.json()
         },
         changeInfo_1 : () => {
         let newInfo = [...userInfo];
@@ -607,8 +610,6 @@ const userURL = "https://www.zuidesigns.com/sp2021/userExample.cgi?"
                     Password : "Mitchell",
                     NodeNumber : "2"
         }
-
-//        SetInfo(newInfo);
 
         },
         changeInfo_2 : () => {
