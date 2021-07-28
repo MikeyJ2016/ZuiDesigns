@@ -86,7 +86,7 @@ const LockerConfiguration = ({navigation}) => {
         message = "Locker " + `${locker.NodeNumber}`;
         analog = `${locker.AnalogVoltage}`;
         digital = `${locker.DigitalStatus}`;
-        if(data.RelayStatus == 0){
+        if(data.RelayStatus == 1){
             lockStatus = "Lock";
         }else{
             lockStatus = "Unlock";

@@ -124,7 +124,7 @@ const AdminConfigureScreen = ({route, navigation}) => {
                             colors ={['#08d4c4','#01ab9d']}
                             style={styles.side_by_side}
                         >
-                          {node.RelayStatus == 1 ?
+                          {node.RelayStatus == 0 ?
                             <Text style ={[styles.textSign,{
                                 color:'#fff'
                             }]}>Unlock</Text>
