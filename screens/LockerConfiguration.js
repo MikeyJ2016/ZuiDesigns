@@ -24,7 +24,8 @@ const LockerConfiguration = ({navigation}) => {
         let res = await response.json();
         res = res.users[0];
         if(res.OwnedNode !== "(null)"){
-            response = await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=verifyNode&node_number=' + `${res.OwnedNode}`);
+            response = await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=verifyNode&node_number=' + `${res.OwnedNode}`)
+            .catch((error) => console.error(error));;
             res = await response.json();
             setData({
                 ...data,
@@ -216,30 +217,29 @@ const LockerConfiguration = ({navigation}) => {
        flexDirection: 'row',
        flex : 1
      }}>
+
         <TouchableOpacity
             style = {[styles.side_by_side ]}
-
-         >
+            onPress= {() => navigation.navigate('User Home Page')}>
             <LinearGradient
                 colors ={['#6E6969','#6E6969']}
                 style={styles.side_by_side}
             >
                 <Text style ={[styles.textSign,{
                     color:'#fff'
-                }]}>Save</Text>
+                }]}>Return Home</Text>
             </LinearGradient>
         </TouchableOpacity>
 
         <TouchableOpacity
-            style = {[styles.side_by_side ]}
-            onPress= {() => navigation.navigate('User Home Page')}>
+            style = {[styles.side_by_side ]}>
             <LinearGradient
                 colors ={['#08d4c4','#01ab9d']}
                 style={styles.side_by_side}
             >
                 <Text style ={[styles.textSign,{
                     color:'#fff'
-                }]}>Back</Text>
+                }]}>Save</Text>
             </LinearGradient>
         </TouchableOpacity>
     </View>

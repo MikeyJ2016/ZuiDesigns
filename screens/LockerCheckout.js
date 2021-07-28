@@ -119,15 +119,15 @@ const LockerCheckout = ({navigation}) => {
                     <TouchableOpacity
                         style = {[styles.side_by_side ]}
                         onPress= {() => {
-                         setAlert(false);
-                        selection()}}>
+                            setAlert(false);
+                            navigation.navigate('User Home Page')}}>
                         <LinearGradient
                             colors ={['#6E6969','#6E6969']}
                             style={styles.side_by_side}
                         >
                             <Text style ={[styles.textSign,{
                                 color:'#fff'
-                            }]}>Checkout</Text>
+                            }]}>Return Home</Text>
                         </LinearGradient>
                     </TouchableOpacity>
 
@@ -135,15 +135,14 @@ const LockerCheckout = ({navigation}) => {
                         style = {[styles.side_by_side ]}
                         onPress= {() => {
                         setAlert(false);
-                        navigation.navigate('User Home Page')}
-                        }>
+                        selection()}}>
                         <LinearGradient
                             colors ={['#08d4c4','#01ab9d']}
                             style={styles.side_by_side}
                         >
                             <Text style ={[styles.textSign,{
                                 color:'#fff'
-                            }]}>Return Home</Text>
+                            }]}>Checkout</Text>
                         </LinearGradient>
                     </TouchableOpacity>
             </View>

@@ -247,15 +247,16 @@ const ChangePasswordScreen = ({navigation}) => {
 
                 <View style={styles.section}>
                     <TouchableOpacity
-                        onPress={() => navigation.goBack()}
-    f                    color = "gray"
-                        style = {[styles.signIn,{
-                            borderColor: '#009387',
-                            borderWidth: 1,
-                            marginLeft : 25
-                        }]}
-                    >
-                    <Text>Cancel</Text>
+                        style = {[styles.signIn ]}
+                        onPress={() => navigation.goBack()}>
+                        <LinearGradient
+                            colors ={['#6E6969','#6E6969']}
+                            style={styles.signIn}
+                        >
+                            <Text style ={[styles.textSign,{
+                                color:'#fff'
+                            }]}>Cancel</Text>
+                       </LinearGradient>
                     </TouchableOpacity>
                 </View>
             </View>

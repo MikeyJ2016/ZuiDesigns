@@ -244,31 +244,28 @@ const AdminConfigureScreen = ({route, navigation}) => {
 
         <TouchableOpacity
             style = {[styles.side_by_side ]}
-         >
+            onPress= {() => {
+                authContext.adminRelease();
+                navigation.navigate('Admin Locker Selection');}}>
             <LinearGradient
                 colors ={['#6E6969','#6E6969']}
                 style={styles.side_by_side}
             >
                 <Text style ={[styles.textSign,{
                     color:'#fff'
-                }]}>Save</Text>
+                }]}>Back</Text>
             </LinearGradient>
         </TouchableOpacity>
 
         <TouchableOpacity
-            style = {[styles.side_by_side ]}
-            onPress= {() => {
-            authContext.adminRelease();
-            navigation.navigate('Admin Locker Selection');
-            }}>
-
+            style = {[styles.side_by_side ]}>
             <LinearGradient
                 colors ={['#08d4c4','#01ab9d']}
                 style={styles.side_by_side}
             >
                 <Text style ={[styles.textSign,{
                     color:'#fff'
-                }]}>Return</Text>
+                }]}>Save</Text>
             </LinearGradient>
         </TouchableOpacity>
     </View>
