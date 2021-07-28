@@ -17,6 +17,9 @@ import Feather from 'react-native-vector-icons/Feather';
 import { useTheme } from 'react-native-paper';
 
 const CreateAdmin = ({navigation}) => {
+
+    const ADMIN_PASSWORD = "GVSUSP2021";
+
     const [data,setData] = React.useState({
         username: '',
         password : '',
@@ -85,12 +88,14 @@ const CreateAdmin = ({navigation}) => {
              let response = await fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=verifyUsername&username=' + `${data.username}`);
              let res = await response.json();
              if(Object.keys(res.users[0]).length === 0 && data.username !== ''){
-                if(data.confirm_password == data.password){
+                if(data.confirm_password == data.password && data.password == ADMIN_PASSWORD){
                   fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?username=' + `${data.username}` + '&userPassword=' + `${data.password}` + '&adminStatus=2')
                     .catch((error) => console.error(error));
                    navigation.goBack();
-                }else{
+                }else if(data.confirm_password !== data.password){
                     alert("passwords do not match");
+                }else if(data.confirm_password !== ADMIN_PASSWORD || data.password !== ADMIN_PASSWORD){
+                    alert("That is NOT the Admin Password");
                 }
              }else{
                   alert("Username already exists");
@@ -203,26 +208,26 @@ return (
            <View style={styles.button}>
                     <TouchableOpacity
                         style = {styles.signIn}
-                        onPress= {() => navigation.goBack()}>
+                        onPress= {() => createNewAdmin()}>
                         <LinearGradient
                             colors ={['#08d4c4','#01ab9d']}
                             style={styles.signIn}
                         >
                             <Text style ={[styles.textSign,{
                                 color:'#fff'
-                            }]}>Login</Text>
+                            }]}>Create Account</Text>
                         </LinearGradient>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        onPress={() => createNewAdmin()}
+                        onPress={() => navigation.goBack()}
                         style = {[styles.signIn,{
                             borderColor: '#009387',
                             borderWidth: 1,
                             marginTop : 15
                         }]}
                     >
-                    <Text>Sign Up</Text>
+                    <Text>Back</Text>
                     </TouchableOpacity>
             </View>
     </View>

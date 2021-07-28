@@ -24,10 +24,10 @@ const AdminConfigureScreen = ({route, navigation}) => {
     }
 
     const fetchData = async() => {
-
         let response  = await fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=verifyUsername&username=' + `${temp}`);
         let res = await response.json();
         res = res.users[0];
+//        alert(`${temp}`);
         if(res.OwnedNode !== "(null)"){
             res.OwnedNode = res.OwnedNode.slice(0,res.OwnedNode.length-1);
             response = await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=verifyNode&node_number=' + `${res.OwnedNode}`);

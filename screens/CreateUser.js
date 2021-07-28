@@ -206,26 +206,26 @@ return (
            <View style={styles.button}>
                     <TouchableOpacity
                         style = {styles.signIn}
-                        onPress= {() => navigation.goBack()}>
+                        onPress= {() => createNewUser()}>
                         <LinearGradient
                             colors ={['#08d4c4','#01ab9d']}
                             style={styles.signIn}
                         >
                             <Text style ={[styles.textSign,{
                                 color:'#fff'
-                            }]}>Login</Text>
+                            }]}>Create Account</Text>
                         </LinearGradient>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        onPress={() => createNewUser()}
+                        onPress={() => navigation.goBack()}
                         style = {[styles.signIn,{
                             borderColor: '#009387',
                             borderWidth: 1,
                             marginTop : 15
                         }]}
                     >
-                    <Text>Sign Up</Text>
+                    <Text>Back</Text>
                     </TouchableOpacity>
             </View>
     </View>

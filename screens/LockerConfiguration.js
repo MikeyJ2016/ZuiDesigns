@@ -20,7 +20,7 @@ const LockerConfiguration = ({navigation}) => {
     let temp = authContext.getUser();
 
     const fetchData = async() => {
-       let response  = await fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=verifyUsername&username=' + `${temp}`);
+       let response  = await fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=verifyUsername&username=' + `${authContext.getUser()}`);
         let res = await response.json();
         res = res.users[0];
         if(res.OwnedNode !== "(null)"){

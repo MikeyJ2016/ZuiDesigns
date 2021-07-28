@@ -539,13 +539,21 @@ const userURL = "https://www.zuidesigns.com/sp2021/userExample.cgi?"
 //            setUserToken('fgkj');
 //            setIsLoading(false);
         },
-        updateUsername: (userName) => {
+        updateUsername: (newUsername, userName) => {
             let user;
             user = null;
-            user = userName;
-            if(loginState.ownedNode !== null){
-            fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateOwnedNode&node_number=' + `${loginState.ownedNode.NodeNumber}` +'&ownership=' + `${userName}`)
+            user = newUsername;
+            if(loginState.ownedNode !== null && !loginState.isAdmin){
+            fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateOwnedNode&node_number=' + `${loginState.ownedNode.NodeNumber}` +'&ownership=' + `${newUsername}`)
             .catch((error) => console.error(error));
+            }else{
+                fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=updateOwnedNode&username=' + `${userName}` + '&ownedNode=0')
+                .catch((error) => console.error(error));
+                 if(loginState.ownedNode !== null){
+                                fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateOwnedNode&node_number=' + `${loginState.ownedNode.NodeNumber}` +'&ownership=0')
+                                .catch((error) => console.error(error));
+                 }
+                 dispatch({type: 'RELEASE'});
             }
             dispatch({type : 'UPDATE_USER', id : userName, token : user});
         },
