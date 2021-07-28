@@ -105,31 +105,31 @@ const AdminLockerSelectionScreen = ({navigation}) => {
         </FlatList>
       </View>
            <View style={styles.row}>
-                    <TouchableOpacity
-                        style = {[styles.side_by_side ]}
-                        onPress= {() => selection()}>
-                        <LinearGradient
-                            colors ={['#6E6969','#6E6969']}
-                            style={styles.side_by_side}
-                        >
-                            <Text style ={[styles.textSign,{
-                                color:'#fff'
-                            }]}>Configure</Text>
-                        </LinearGradient>
-                    </TouchableOpacity>
+                <TouchableOpacity
+                    style = {[styles.side_by_side ]}
+                    onPress= {() => navigation.navigate('Admin Home Page')}>
+                    <LinearGradient
+                        colors ={['#6E6969','#6E6969']}
+                        style={styles.side_by_side}
+                    >
+                        <Text style ={[styles.textSign,{
+                            color:'#fff'
+                        }]}>Return Home</Text>
+                    </LinearGradient>
+                </TouchableOpacity>
 
-                    <TouchableOpacity
-                        style = {[styles.side_by_side ]}
-                        onPress= {() => navigation.navigate('Admin Home Page')}>
-                        <LinearGradient
-                            colors ={['#08d4c4','#01ab9d']}
-                            style={styles.side_by_side}
-                        >
-                            <Text style ={[styles.textSign,{
-                                color:'#fff'
-                            }]}>Return Home</Text>
-                        </LinearGradient>
-                    </TouchableOpacity>
+                <TouchableOpacity
+                    style = {[styles.side_by_side ]}
+                    onPress= {() => selection()}>
+                    <LinearGradient
+                        colors ={['#08d4c4','#01ab9d']}
+                        style={styles.side_by_side}
+                    >
+                        <Text style ={[styles.textSign,{
+                            color:'#fff'
+                        }]}>Configure</Text>
+                    </LinearGradient>
+                </TouchableOpacity>
             </View>
     </View>
     );
