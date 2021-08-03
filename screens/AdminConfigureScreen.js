@@ -27,11 +27,12 @@ const AdminConfigureScreen = ({route, navigation}) => {
         let response  = await fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=verifyUsername&username=' + `${temp}`);
         let res = await response.json();
         res = res.users[0];
-//        alert(`${temp}`);
+//     alert(`${temp}`);
         if(res.OwnedNode !== "(null)"){
             res.OwnedNode = res.OwnedNode.slice(0,res.OwnedNode.length-1);
             response = await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=verifyNode&node_number=' + `${res.OwnedNode}`);
             res = await response.json();
+//            alert(`${res.nodes[0].NodeNumber}`)
             setNode({
                 ...node,
                     NodeNumber: res.nodes[0].NodeNumber,
@@ -40,6 +41,15 @@ const AdminConfigureScreen = ({route, navigation}) => {
                     AnalogVoltage : res.nodes[0].AnalogVoltage,
                     Ownership : res.nodes[0].Ownership,
             })
+             if(res.nodes[0].DigitalStatus == 0){
+                    if(checkLockerS >= 20){
+                        ReleaseLockLocker();
+                    }else{
+                        checkLockerS = checkLockerS + 1;
+                    }
+            }else{
+                checkLockerS = 0;
+            }
         }else{
             setNode({
                 ...node,
@@ -94,6 +104,33 @@ const AdminConfigureScreen = ({route, navigation}) => {
             })
         }
     }
+
+    const ReleaseLockLocker = async() => {
+                let response, res;
+                if(locker !== null){
+                    response = await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateLockerStatus&node_number=' + `${data.NodeNumber}` + '&relay_status=0');
+                    let res = await response.json();
+                    res = res.users[0];
+
+                    setData({
+                        ...data,
+                            NodeNumber: res.NodeNumber,
+                            RelayStatus : res.RelayStatus,
+                            DigitalStatus : res.DigitalStatus,
+                            AnalogVoltage : res.AnalogVoltage,
+                            Ownership : res.Ownership,
+                    })
+                }else{
+                    setData({
+                        ...data,
+                        NodeNumber: "",
+                        RelayStatus : 0,
+                        DigitalStatus : "",
+                        AnalogVoltage : "",
+                        Ownership : ""
+                    })
+                }
+            }
 
 
     const updateOwner = () => {
@@ -195,7 +232,7 @@ const AdminConfigureScreen = ({route, navigation}) => {
             color:'#fff',
             paddingHorizontal : 20,
             textAlign: 'center',
-        }]}>Digital Input Voltage</Text>
+        }]}>Locker Door</Text>
 
         <Text style ={[styles.textSign,{
             color:'#fff',
@@ -251,7 +288,8 @@ const AdminConfigureScreen = ({route, navigation}) => {
             style = {[styles.side_by_side ]}
             onPress= {() => {
                 authContext.adminRelease();
-                navigation.navigate('Admin Locker Selection');}}>
+
+                navigation.navigate('Admin Locker Selection')  & ReleaseLockLocker();}}>
             <LinearGradient
                 colors ={['#6E6969','#6E6969']}
                 style={styles.side_by_side}
@@ -262,17 +300,6 @@ const AdminConfigureScreen = ({route, navigation}) => {
             </LinearGradient>
         </TouchableOpacity>
 
-        <TouchableOpacity
-            style = {[styles.side_by_side ]}>
-            <LinearGradient
-                colors ={['#08d4c4','#01ab9d']}
-                style={styles.side_by_side}
-            >
-                <Text style ={[styles.textSign,{
-                    color:'#fff'
-                }]}>Save</Text>
-            </LinearGradient>
-        </TouchableOpacity>
     </View>
     </View>
     );
