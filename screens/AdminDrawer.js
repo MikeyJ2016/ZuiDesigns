@@ -70,7 +70,9 @@ return(
                          />
                     )}
                     label = "Home Screen"
-                    onPress={() => {props.navigation.navigate('Admin Home Page')}}
+                    onPress={() => {
+                    authContext.adminRelease();
+                    props.navigation.navigate('Admin Home Page')}}
                 />
                 <DrawerItem
                     icon={({color,size}) => (
@@ -81,7 +83,11 @@ return(
                          />
                     )}
                     label = "Locker Selection"
-                    onPress={() => {props.navigation.navigate("Admin Locker Selection")}}
+                    onPress={() => {
+                    authContext.adminRelease();
+                    props.navigation.navigate("Admin Locker Selection");
+
+                    }}
                 />
                 <DrawerItem
                     icon={({color,size}) => (
@@ -92,7 +98,9 @@ return(
                          />
                     )}
                     label = "Settings"
-                    onPress={() => {props.navigation.navigate("Settings")}}
+                    onPress={() => {
+                    authContext.adminRelease();
+                    props.navigation.navigate("Settings")}}
                 />
 
             </Drawer.Section>
@@ -118,7 +126,9 @@ return(
                      />
                 )}
                 label = "Sign Out"
-                onPress={() => {authContext.signOut()}}
+                onPress={() => {
+                authContext.adminRelease();
+                authContext.signOut()}}
             />
         </Drawer.Section >
    </View>
