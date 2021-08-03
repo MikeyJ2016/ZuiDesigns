@@ -37,13 +37,23 @@ const LockerConfiguration = ({navigation}) => {
             })
             if(res.nodes[0].RelayStatus == 1){
                 if(checkLocker >= 20){
-                    LockLocker();
+                       ReleaseLockLocker();
                 }else{
                     checkLocker = checkLocker + 1;
                 }
             }else{
                 checkLocker = 0;
             }
+
+            if(res.nodes[0].DigitalStatus == 0){
+                            if(checkLockerS >= 20){
+                                ReleaseLockLocker();
+                            }else{
+                                checkLockerS = checkLockerS + 1;
+                            }
+                        }else{
+                            checkLockerS = 0;
+                        }
         }else{
             setData({
                 ...data,
@@ -53,6 +63,7 @@ const LockerConfiguration = ({navigation}) => {
                 AnalogVoltage : "",
                 Ownership : ""
             })
+            authContext.release();
         }
     }
 
@@ -121,8 +132,35 @@ const LockerConfiguration = ({navigation}) => {
                 AnalogVoltage : "",
                 Ownership : ""
             })
+
         }
     }
+
+    const ReleaseLockLocker = async() => {
+            let response, res;
+            if(locker !== null){
+                        response = await fetch('https://www.zuidesigns.com/sp2021/nodeExample.cgi?input_request=updateLockerStatus&node_number=' + `${data.NodeNumber}` + '&relay_status=0');
+                let res = await response.json();
+                res = res.users[0];
+                setData({
+                    ...data,
+                        NodeNumber: res.NodeNumber,
+                        RelayStatus : res.RelayStatus,
+                        DigitalStatus : res.DigitalStatus,
+                        AnalogVoltage : res.AnalogVoltage,
+                        Ownership : res.Ownership,
+                })
+            }else{
+                setData({
+                    ...data,
+                    NodeNumber: "",
+                    RelayStatus : 0,
+                    DigitalStatus : "",
+                    AnalogVoltage : "",
+                    Ownership : ""
+                })
+            }
+        }
 
 
     return (
@@ -151,14 +189,14 @@ const LockerConfiguration = ({navigation}) => {
         </TouchableOpacity>
         <TouchableOpacity
             style = {[styles.signIn,{marginTop : 50},{paddingHorizontal :75}]}
-            onPress={() => authContext.release()}
-        >
+            onPress={() => authContext.release() & navigation.navigate('User Home Page') & ReleaseLockLocker()}>
             <LinearGradient
                 colors ={['#08d4c4','#01ab9d']}
                 style={styles.side_by_side}
             >
                 <Text style ={[styles.textSign,{
-                    color:'#fff'
+                    color:'#fff',
+                    textAlign: 'center'
                 }]}>Release Locker</Text>
             </LinearGradient>
         </TouchableOpacity>
@@ -167,12 +205,14 @@ const LockerConfiguration = ({navigation}) => {
         <Text style ={[styles.textSign,{
             color:'#fff',
             paddingHorizontal : 20,
+            paddingVertical : 40,
             textAlign: 'center',
-        }]}>Digital Input Voltage</Text>
+        }]}>Locker Door</Text>
 
         <Text style ={[styles.textSign,{
             color:'#fff',
             paddingHorizontal : 20,
+            paddingVertical : 35,
             marginTop : 0,
             justifyContent : 'center',
             textAlign: 'center',
@@ -228,18 +268,6 @@ const LockerConfiguration = ({navigation}) => {
                 <Text style ={[styles.textSign,{
                     color:'#fff'
                 }]}>Return Home</Text>
-            </LinearGradient>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-            style = {[styles.side_by_side ]}>
-            <LinearGradient
-                colors ={['#08d4c4','#01ab9d']}
-                style={styles.side_by_side}
-            >
-                <Text style ={[styles.textSign,{
-                    color:'#fff'
-                }]}>Save</Text>
             </LinearGradient>
         </TouchableOpacity>
     </View>
