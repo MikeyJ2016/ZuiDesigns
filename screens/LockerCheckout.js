@@ -72,7 +72,7 @@ const LockerCheckout = ({navigation}) => {
                     fetch('https://www.zuidesigns.com/sp2021/userExample.cgi?input_request=updateOwnedNode&username=' + `${authContext.getUser()}` + '&ownedNode=' +`${data.NodeNumber}`)
                     .catch((error) => console.error(error));
                     setAlert(false);
-                    navigation.navigate('User Home Page');
+                    navigation.navigate('Locker Configuration');
                   }
               }else{
                 setAlert(true);
@@ -135,6 +135,7 @@ const LockerCheckout = ({navigation}) => {
                         style = {[styles.side_by_side ]}
                         onPress= {() => {
                         setAlert(false);
+                        navigation.navigate('Locker Configuration');
                         selection()}}>
                         <LinearGradient
                             colors ={['#08d4c4','#01ab9d']}
